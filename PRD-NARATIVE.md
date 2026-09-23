@@ -1,0 +1,36 @@
+# Product Requirements Document (PRD)
+# ARCHIVA — Portal Sistem Administrasi Persuratan SDN Jatipulo 07
+
+## 1. Latar Belakang
+
+SDN Jatipulo 07 merupakan sekolah dasar negeri yang, seperti kebanyakan instansi pendidikan di lingkungan Dinas Pendidikan, masih menjalankan proses administrasi persuratan secara manual dan semi-manual. Surat masuk dari pihak eksternal—baik dari Dinas Pendidikan, sekolah lain, maupun instansi terkait—umumnya diterima dan dibagikan terlebih dahulu melalui grup WhatsApp sekolah sebelum akhirnya didokumentasikan secara fisik oleh petugas Tata Usaha. Proses distribusi ke pihak internal, seperti guru kelas atau tenaga pendidik lain, dilakukan secara manual sehingga rentan terlambat, tercecer, atau tidak terpantau oleh kepala sekolah selaku pimpinan. Hal yang sama berlaku pada surat keluar, di mana proses pembuatan konsep, koreksi, persetujuan, hingga penomoran masih bergantung pada dokumen fisik yang harus berpindah tangan berkali-kali.
+
+Sebagai bagian dari pengembangan website profil sekolah SDN Jatipulo 07 yang lebih besar, muncul kebutuhan untuk membangun sebuah sistem administrasi persuratan internal yang terintegrasi. Sistem ini diberi nama ARCHIVA. Pada tahap PRD ini, ruang lingkup pembahasan difokuskan terlebih dahulu pada portal ARCHIVA itu sendiri sebagai inti dari sistem administrasi persuratan, sebelum nantinya diintegrasikan penuh ke dalam website profil sekolah secara keseluruhan.
+
+ARCHIVA dirancang untuk dapat diakses oleh seluruh pemangku kepentingan di lingkungan sekolah, mulai dari guru, tenaga pendidik (termasuk security, penjaga sekolah/OB, Tata Usaha bagian Dapodik, dan Tata Usaha bagian keuangan), kepala sekolah sebagai pimpinan, hingga admin yang bertugas mengelola hak akses seluruh pengguna sistem.
+
+## 2. User Story
+
+Sebagai petugas Tata Usaha yang menerima surat masuk, saya ingin dapat langsung menginput data surat dan mengunggah hasil pindai dokumen ke dalam sistem, sehingga surat tersebut segera terdokumentasi secara digital dan dapat didistribusikan ke pihak yang dituju tanpa harus menunggu proses fisik berpindah tangan.
+
+Sebagai guru kelas atau tenaga pendidik yang menjadi tujuan sebuah surat, saya ingin menerima notifikasi dan dapat membaca surat tersebut langsung melalui akun saya di sistem, serta memberikan disposisi atau tindak lanjut secara elektronik, sehingga saya tidak perlu menunggu surat fisik sampai ke tangan saya.
+
+Sebagai staf yang mengajukan surat keluar, saya ingin dapat membuat konsep atau draf surat melalui sistem dan mengajukannya untuk diverifikasi, sehingga proses koreksi dan revisi dapat dilakukan secara elektronik tanpa harus mencetak ulang dokumen setiap kali ada perubahan.
+
+Sebagai kepala sekolah selaku penandatangan dan pimpinan, saya ingin dapat memverifikasi, mengoreksi, dan menyetujui surat sesuai alur persetujuan berjenjang, serta memantau posisi dan status seluruh surat masuk maupun keluar secara real-time, sehingga saya memiliki kendali penuh atas administrasi persuratan sekolah tanpa harus menelusuri arsip fisik satu per satu.
+
+Sebagai admin sistem, saya ingin dapat mengatur hak akses setiap pengguna sesuai peran dan jabatannya masing-masing, sehingga setiap pihak hanya dapat mengakses fitur dan dokumen yang relevan dengan tugasnya.
+
+## 3. Problem Statement
+
+Proses administrasi persuratan yang berjalan saat ini di SDN Jatipulo 07 menimbulkan sejumlah persoalan. Pertama, distribusi surat baik dari eksternal ke internal maupun antarunit internal sekolah memakan waktu yang tidak singkat, karena bergantung pada perpindahan dokumen fisik atau penyebaran informasi informal melalui grup WhatsApp yang tidak terdokumentasi secara terstruktur. Kedua, tidak adanya sistem penomoran surat yang terpusat berisiko menimbulkan duplikasi nomor atau kesalahan pencatatan, terutama ketika beberapa unit (misalnya TU Dapodik dan TU Keuangan) sama-sama mengeluarkan surat pada waktu yang berdekatan. Ketiga, proses disposisi dan tindak lanjut surat masih dilakukan secara manual sehingga sulit dilacak, dan kepala sekolah selaku pimpinan tidak memiliki cara mudah untuk memantau di mana posisi sebuah surat berada dan sejauh mana tindak lanjutnya. Keempat, arsip surat—baik masuk maupun keluar—tersimpan secara fisik dan tersebar, sehingga pencarian dokumen lama memakan waktu dan berisiko hilang atau rusak. Kelima, proses persetujuan dan penandatanganan surat keluar yang berjenjang mengharuskan dokumen dicetak dan diedarkan berulang kali sebelum benar-benar final, yang memperlambat keseluruhan alur kerja persuratan sekolah.
+
+## 4. Solusi
+
+ARCHIVA hadir sebagai portal administrasi persuratan yang mendigitalkan seluruh alur kerja surat-menyurat di SDN Jatipulo 07, mulai dari surat masuk eksternal, surat masuk internal, hingga surat keluar. Untuk surat masuk eksternal, ARCHIVA memungkinkan petugas TU mencatat dan mengarsipkan dokumen secara digital begitu surat diterima, kemudian mendistribusikannya secara elektronik kepada penerima yang dituju, yang selanjutnya dapat membaca dan memberikan disposisi langsung melalui akunnya masing-masing. Untuk surat masuk internal, mekanisme serupa diterapkan melalui menu inbox surat masuk pada sistem. Untuk surat keluar, ARCHIVA menyediakan alur mulai dari pembuatan konsep surat oleh staf, verifikasi dan koreksi elektronik oleh pimpinan, persetujuan atau penandatanganan sesuai hierarki jabatan, penomoran surat otomatis dengan format yang fleksibel, hingga pengiriman dan pengarsipan digital—termasuk opsi mengunduh berkas untuk dikirim secara manual apabila surat ditujukan ke pihak eksternal.
+
+Seluruh proses tersebut didukung oleh kemampuan pelacakan status surat secara real-time, sehingga kepala sekolah dapat memantau posisi dan tindak lanjut setiap surat tanpa harus menelusuri dokumen fisik. Arsip digital yang terpusat, terkategorisasi, dan dapat dicari dengan cepat menggantikan penyimpanan fisik yang tersebar, sementara pengaturan hak akses berjenjang memastikan setiap pengguna—guru, tenaga pendidik, kepala sekolah, maupun admin—hanya dapat mengakses fitur dan dokumen yang sesuai dengan peran serta tanggung jawabnya.
+
+## 5. Goals
+
+Tujuan utama dari pengembangan ARCHIVA adalah mempercepat proses distribusi surat, dari yang sebelumnya dapat memakan waktu berhari-hari menjadi dapat diakses dalam hitungan menit melalui distribusi elektronik. Selain itu, ARCHIVA bertujuan menghilangkan risiko duplikasi dan kesalahan penomoran surat melalui mekanisme penomoran otomatis yang konsisten di seluruh unit sekolah. ARCHIVA juga ditujukan untuk memberikan visibilitas penuh kepada kepala sekolah atas seluruh proses persuratan, melalui kemampuan pelacakan status dan disposisi secara real-time, sehingga pengambilan keputusan dan tindak lanjut dapat dilakukan lebih cepat dan akuntabel. Di sisi pengarsipan, ARCHIVA bertujuan menyediakan satu sumber arsip digital yang terpusat, terstruktur, dan mudah dicari, guna menggantikan ketergantungan pada arsip fisik yang rawan hilang atau sulit ditelusuri kembali. Terakhir, dengan alur persetujuan dan disposisi yang sepenuhnya elektronik, ARCHIVA bertujuan meminimalkan kebutuhan mencetak dan mengedarkan dokumen fisik berulang kali dalam proses administrasi persuratan sehari-hari di SDN Jatipulo 07.
