@@ -1,0 +1,1 @@
+gunakan font Avigea Font | dafont.com pada text "ARCHIVA" untuk LOGO pakai yg ak lampirkan di ss. untuk font yg dipakai untuk web pakai font basic aja biasa dipakai dan familiar kalanagan semua org. theme warna coloring nya ak mau biru muda ke biru tuaan.

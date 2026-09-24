@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>ARCHIVA — Portal Login SDN Jatipulo 07</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#00173b",
+            "primary-container": "#0f2c59",
+            secondary: "#006398",
+            "secondary-focus": "#0284c7",
+            "azure-sky": "#e0f2fe",
+            "azure-soft": "#bae6fd",
+            "canvas-light": "#f8fafc",
+            "border-subtle": "#e2e8f0",
+            "on-surface": "#0d1c2e",
+            "on-surface-variant": "#64748b"
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            brand: ['"Playfair Display"', '"Plus Jakarta Sans"', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+    @media (max-height: 640px) {
+      body {
+        overflow-y: auto !important;
+      }
+    }
+    .brand-title {
+      letter-spacing: 0.08em;
+    }
+    /* Subtle background ambient gradients */
+    .bg-mesh {
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(224, 242, 254, 0.7) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(186, 230, 253, 0.5) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(203, 213, 225, 0.3) 0px, transparent 60%);
+    }
+  </style>
+</head>
+<body class="bg-mesh text-on-surface h-full flex flex-col justify-between selection:bg-azure-soft selection:text-primary">
+
+  <!-- Compact Top Header -->
+  <header class="w-full bg-white/85 backdrop-blur-md border-b border-border-subtle/80 px-4 sm:px-8 py-2.5 z-10 shrink-0">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <img alt="ARCHIVA Logo" class="w-7 h-7 object-contain drop-shadow-sm" 
+             src="./Screenshot_2026-09-24.png"
+             onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuCPOpZy7ZWLINjI9TNu9_5VdOzYv8FLd7sPjJZvOWv7ZOhYIVF_g3iEu-KgBm2B0tXrRNRKODrIeszy6ldNU3ss9jPwuvzvjAhLV67rxIK2RQv2JVd0u_Ka5ESJxPO9ICC-uZMjwUU1_0JBWm4eGXlzSE-YSuungztl_8eNa7TzmKK78lbVMq5TIXe1zvIKWdau1jTEdx6jsK-vT_SXbmf4IHImxtNkwaGA65oSBfZlgWlZrb9ws5yJ2b_hgfyAKuf2'">
+        <div>
+          <span class="font-serif brand-title text-base sm:text-lg font-bold text-primary tracking-wider leading-none">ARCHIVA</span>
+          <span class="text-[10px] text-on-surface-variant block -mt-0.5 tracking-tight font-medium">SDN Jatipulo 07</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 bg-slate-50 border border-slate-200/80 px-2.5 py-1 rounded-full shadow-2xs">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-[11px] font-semibold text-slate-700">Layanan Aktif</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Centered Content (Zero-Scroll Optimized) -->
+  <main class="flex-1 flex items-center justify-center p-3 sm:p-4 min-h-0 overflow-y-auto">
+    <div class="w-full max-w-[410px] my-auto">
+      
+      <!-- Login Card -->
+      <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-200/80 p-5 sm:p-6 relative overflow-hidden backdrop-blur-sm">
+        
+        <!-- Ambient Top Glow Bar -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-azure-soft via-secondary-focus to-primary"></div>
+
+        <!-- Header / Logo & Welcome -->
+        <div class="flex flex-col items-center text-center mb-4">
+          <div class="w-12 h-12 rounded-xl bg-azure-sky/40 border border-azure-soft flex items-center justify-center mb-2 shadow-inner">
+            <img alt="ARCHIVA Emblem" class="w-8 h-8 object-contain" 
+                 src="./Screenshot_2026-09-24.png"
+                 onerror="this.src='https://lh3.googleusercontent.com/aida-public/AB6AXuBd8G6ax-olgTpk62LANa704_MnmW89Ks7oZof56h3qz25Fi-8l-hPjFe6o5T87DJ9aZb-f-zXXTfh2WvBWaZkLo6tLmR0ADN_RIkTIB8hmMdlRTuj_Y5go9PpvcQellDwcsxQPD0UC7iEQ33Q61tkjXQMij2vl7Lgs3RGwzoooEDyeFuznjtiSMibkXVhNHH3zDJqYgnKpZUF8UUFKDzvY9RoU8MNzBrKwNTbZE8io80YOV_6_Z9pjox7W_6CCE4NK'">
+          </div>
+          <h1 class="text-xl sm:text-2xl font-serif font-bold text-primary tracking-tight">
+            Login ke <span class="text-secondary-focus font-extrabold brand-title">ARCHIVA</span>
+          </h1>
+          <p class="text-xs text-on-surface-variant mt-0.5 max-w-[280px]">
+            Portal Administrasi & Persuratan SDN Jatipulo 07
+          </p>
+        </div>
+
+        <!-- Form -->
+        <form class="space-y-3.5" onsubmit="handleLoginSubmit(event)">
+          <!-- ID Input -->
+          <div class="space-y-1 text-left">
+            <label class="text-[11px] font-semibold text-slate-700 uppercase tracking-wider block" for="identifierInput">
+              ID Pengguna
+            </label>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3.5 text-slate-400 pointer-events-none text-[19px]">badge</span>
+              <input class="w-full h-10 pl-11 pr-3 bg-slate-50/80 rounded-lg text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-secondary-focus/30 focus:border-secondary-focus focus:bg-white transition-all" 
+                     id="identifierInput" 
+                     placeholder="Masukkan ID / NIP / NUPTK" 
+                     required 
+                     type="text">
+            </div>
+          </div>
+
+          <!-- Password Input -->
+          <div class="space-y-1 text-left">
+            <label class="text-[11px] font-semibold text-slate-700 uppercase tracking-wider block" for="passwordInput">
+              Password
+            </label>
+            <div class="relative flex items-center">
+              <span class="material-symbols-outlined absolute left-3.5 text-slate-400 pointer-events-none text-[19px]">lock</span>
+              <input class="w-full h-10 pl-11 pr-11 bg-slate-50/80 rounded-lg text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-secondary-focus/30 focus:border-secondary-focus focus:bg-white transition-all" 
+                     id="passwordInput" 
+                     placeholder="••••••••••••" 
+                     required 
+                     type="password">
+              <button aria-label="Tampilkan atau sembunyikan kata sandi" 
+                      class="absolute right-3 text-slate-400 hover:text-slate-700 transition-colors p-1 flex items-center justify-center cursor-pointer" 
+                      id="togglePasswordBtn" 
+                      onclick="togglePasswordVisibility()" 
+                      type="button">
+                <span class="material-symbols-outlined text-[19px]" id="passwordToggleIcon">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Remember & Forgot -->
+          <div class="flex items-center justify-between pt-0.5 text-left">
+            <label class="flex items-center gap-1.5 cursor-pointer select-none">
+              <input class="w-3.5 h-3.5 rounded text-secondary-focus focus:ring-secondary-focus accent-secondary-focus cursor-pointer" id="rememberMe" type="checkbox">
+              <span class="text-xs text-slate-600">Ingat Saya</span>
+            </label>
+            <a class="text-xs font-medium text-secondary-focus hover:underline transition-all" href="#">
+              Lupa Password?
+            </a>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-1">
+            <button class="w-full h-10 rounded-lg bg-gradient-to-r from-secondary-focus to-primary hover:from-sky-600 hover:to-primary-container text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-sm hover:shadow transition-all active:scale-[0.99] cursor-pointer" 
+                    id="submitLoginBtn" 
+                    type="submit">
+              <span>MASUK KE SISTEM</span>
+              <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </button>
+          </div>
+
+          <!-- Help / Admin Info -->
+          <div class="pt-2 text-center border-t border-slate-100">
+            <p class="text-[11px] text-slate-500 leading-normal">
+              Akun ARCHIVA diterbitkan oleh Tata Usaha SDN Jatipulo 07.<br>
+              <span class="inline-flex items-center justify-center gap-1 mt-0.5">
+                Kendala akses akun? 
+                <a class="inline-flex items-center gap-0.5 font-semibold text-secondary-focus hover:underline" href="#">
+                  <span class="material-symbols-outlined text-[14px]">support_agent</span>Hubungi Admin TU
+                </a>
+              </span>
+            </p>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Compact Bottom Footer -->
+  <footer class="w-full bg-white/70 backdrop-blur-md border-t border-border-subtle/70 px-4 sm:px-8 py-2 shrink-0 text-center md:text-left z-10">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px] text-slate-500">
+      <p>© 2024 ARCHIVA — SDN Jatipulo 07. Seluruh hak cipta dilindungi.</p>
+      <div class="flex items-center gap-4">
+        <a class="hover:text-secondary-focus transition-colors" href="#">Panduan Persuratan</a>
+        <span class="text-slate-300">•</span>
+        <a class="hover:text-secondary-focus transition-colors" href="#">Kebijakan Privasi</a>
+        <span class="text-slate-300">•</span>
+        <a class="hover:text-secondary-focus transition-colors" href="#">Bantuan Teknis</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+
+    // Toggle Password Field Visibility
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('passwordInput');
+      const toggleIcon = document.getElementById('passwordToggleIcon');
+      if (!passwordInput || !toggleIcon) return;
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.textContent = 'visibility_off';
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.textContent = 'visibility';
+      }
+    }
+
+    // Handle Login Submit with Feedback
+    function handleLoginSubmit(event) {
+      event.preventDefault();
+      const submitBtn = document.getElementById('submitLoginBtn');
+      if (!submitBtn) return;
+
+      const originalContent = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <span class="material-symbols-outlined animate-spin text-[16px]">sync</span>
+        <span>Memverifikasi Akun...</span>
+      `;
+
+      setTimeout(() => {
+        submitBtn.innerHTML = `
+          <span class="material-symbols-outlined text-[16px]">check_circle</span>
+          <span>Akses Diterima &mdash; Membuka Portal</span>
+        `;
+        submitBtn.classList.remove('from-secondary-focus', 'to-primary');
+        submitBtn.classList.add('from-emerald-600', 'to-emerald-700');
+        
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalContent;
+          submitBtn.classList.remove('from-emerald-600', 'to-emerald-700');
+          submitBtn.classList.add('from-secondary-focus', 'to-primary');
+        }, 1800);
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
