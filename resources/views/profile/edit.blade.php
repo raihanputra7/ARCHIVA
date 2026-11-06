@@ -1,29 +1,27 @@
-<x-app-layout>
+<x-app-layout active="profile">
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
+        <h2 class="font-bold text-xl text-on-surface leading-tight">
+            Pengaturan Akun Pengguna
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
+    <div class="space-y-6">
+        <x-card title="Informasi Profil" subtitle="Perbarui nama akun dan alamat email kedinasan Anda.">
+            <div class="max-w-xl">
+                @include('profile.partials.update-profile-information-form')
             </div>
+        </x-card>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
+        <x-card title="Perbarui Kata Sandi" subtitle="Pastikan akun Anda menggunakan kata sandi yang aman untuk menjaga kerahasiaan persuratan sekolah.">
+            <div class="max-w-xl">
+                @include('profile.partials.update-password-form')
             </div>
+        </x-card>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
+        <x-card title="Hapus Akun" subtitle="Tindakan permanen untuk menghapus akun Anda dari sistem.">
+            <div class="max-w-xl">
+                @include('profile.partials.delete-user-form')
             </div>
-        </div>
+        </x-card>
     </div>
 </x-app-layout>
