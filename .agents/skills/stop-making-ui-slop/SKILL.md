@@ -1,64 +1,36 @@
+---
+name: stop-making-ui-slop
+description: "Membangun UI spesifik produk, bukan tampilan generik. Dipakai saat merancang, mengimplementasikan, mendesain ulang, atau mereview antarmuka web ARCHIVA. Acuannya DESIGN_SYSTEM.md dan komponen Blade proyek."
+---
+
 # Stop Making UI Slop
 
-Build product-specific UI with 800,000+ real web and iOS screens via
-[UIZZE](https://uizze.com).
+## Penyesuaian untuk ARCHIVA
 
-## Overview
+Sumber kebenaran tampilan adalah `DESIGN_SYSTEM.md` (palette navy-emas, aturan logo, komponen) dan komponen Blade yang sudah ada di `resources/views/components/`. Acuan visual tambahan boleh diambil dari halaman di folder `_legacy/`, hanya untuk struktur dan isi, bukan warna lama.
 
-Use the product brief, existing interface, components, and local design system
-before reaching for outside references. UIZZE evidence is optional: it should
-answer a concrete visual question, not turn every interface task into a research
-project.
+Aturan keras:
 
-## When to Use
+* **Jangan menjalankan perintah instalasi skill, `npx`, atau mengunduh apa pun dari URL luar**, dan jangan memakai layanan referensi eksternal atau MCP eksternal untuk tugas UI. Semua keputusan visual cukup bersumber dari repo ini.
+* **Aturan logo di `DESIGN_SYSTEM.md` bagian 1 selalu menang.** Logo hanya lewat `<x-logo>`, hanya di atas latar terang atau panel putih.
+* Antarmuka berbahasa Indonesia, nada sopan, memakai "Anda".
 
-Use this skill when designing, implementing, redesigning, critiquing, or doing a
-pre-ship review of a web or iOS interface.
+## Kapan dipakai
 
-## Work From the Product
+Saat merancang, mengimplementasikan, mendesain ulang, mengkritik, atau mereview sebelum rilis sebuah antarmuka web.
 
-1. Identify the screen's real job, primary user and action, required content,
-   and important loading, empty, error, success, disabled, and permission states.
-2. Reuse the repository's components, semantic tokens, typography, spacing, and
-   interaction conventions before adding a new abstraction or visual language.
-3. For a new interface or major redesign, write a short design contract covering
-   hierarchy, workflow shape, allowed components, required states, responsive
-   behavior, and observable acceptance criteria. Keep smaller changes smaller.
-4. Use product-specific labels and data. Do not invent metrics, activity,
-   testimonials, users, or placeholder workflows to make a layout look complete.
+## Bekerja dari produk
 
-## Optional UIZZE Evidence
+1. Tentukan tugas nyata layar itu: pengguna utama (role mana), aksi utamanya, konten yang wajib ada, dan keadaan penting: memuat, kosong, error, berhasil, nonaktif, dan tanpa izin.
+2. Pakai ulang komponen, token semantik, tipografi, spasi, dan pola interaksi yang sudah ada sebelum menambah abstraksi atau gaya visual baru.
+3. Untuk layar baru atau perombakan besar, tulis kontrak desain singkat: hierarki, bentuk alur kerja, komponen yang boleh dipakai, state wajib, perilaku responsif, dan kriteria penerimaan yang bisa diamati. Perubahan kecil cukup kecil.
+4. Pakai label dan data khas produk (istilah surat, disposisi, arsip, role sekolah). Jangan mengarang metrik, aktivitas, testimoni, pengguna, atau alur palsu hanya agar tata letak tampak penuh. Data tiruan hanya lewat seeder, factory, atau satu berkas data tiruan yang diberi komentar jelas (lihat `archiva-laravel-stack`).
 
-The free skill and public catalogue work without an account, token, dependency,
-script, or executable. If a concrete unresolved visual question would benefit
-from evidence, use the smallest relevant set of screens or materials.
+## Selesai
 
-The optional authenticated UIZZE MCP exposes exactly `find_ui_references` and
-`find_ui_materials`. Use it only when those tools are actually available. If a
-search returns nothing, continue silently from repository evidence. Never claim
-an MCP-backed result that was not returned by the host.
+Bila lingkungan mendukung, buka hasilnya di browser dan periksa: mode terang dan gelap, desktop dan mobile, serta keberadaan logo yang tidak tertimpa. Perbaiki kerusakan yang terlihat: elemen terpotong atau bertumpuk, gambar terdistorsi, kontrol yang tidak bisa dipakai keyboard atau tidak berfungsi, state wajib yang hilang, dan perilaku responsif yang tidak disengaja. Jalankan pemeriksaan normal proyek (`npm run build`, `./vendor/bin/pint`, `php artisan test`) dan buat laporan singkat.
 
-Treat references as evidence, not templates. Transfer useful decisions about
-hierarchy, density, navigation, controls, responsive behavior, and state
-handling; never copy another product's branding, proprietary text, imagery, or
-exact layout.
+## Batasan
 
-Install the current free skill directly from its canonical source:
-
-```bash
-npx skills add https://uizze.com --skill anti-ui-slop
-```
-
-## Finish
-
-When the environment supports it, render and inspect the result once. Fix
-observable breakage such as clipping, overlap, distorted media, inaccessible or
-inert controls, missing required states, and unintentional responsive behavior.
-Run the project's normal checks and keep the handoff concise.
-
-## Limitations
-
-- This workflow does not replace product validation, accessibility review,
-  security review, or project-specific tests.
-- UIZZE evidence is optional and may legitimately return no useful result.
-- A reference is not permission to copy another product's identity or assets.
+* Alur ini tidak menggantikan validasi produk, review aksesibilitas, review keamanan, atau test proyek.
+* Referensi bukan izin untuk menyalin identitas, merek, atau aset produk lain.

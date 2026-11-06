@@ -1,136 +1,69 @@
+---
+name: web-project-brainstorming
+description: "Kerangka brainstorming bertahap untuk fitur atau halaman web baru di ARCHIVA. Dipakai hanya jika pemilik project secara eksplisit meminta brainstorming. Stack sudah tetap (Laravel, MySQL, Blade, Tailwind)."
+---
+
 # Web Project Brainstorming
 
-## Overview
+## Penyesuaian untuk ARCHIVA
 
-This skill provides a structured, masterclass-level framework for brainstorming web projects, web applications, or individual page designs at their inception. It guides developers and designers through scoping the core product concept, mapping user flows, defining visual styling aesthetics, selecting the technical stack, and planning for search engine optimization (SEO) and performance.
+* **Hanya dipakai bila pemilik project meminta brainstorming secara eksplisit** (mis. "brainstorm fitur disposisi"). Jangan aktif otomatis di awal pekerjaan.
+* **Stack sudah final dan tidak dibahas ulang**: Laravel, MySQL, Blade, Tailwind (Breeze), Alpine.js, deploy ke shared hosting. Jangan menyarankan Next.js, React, Prisma, Supabase, atau layanan serupa. Detailnya ada di `archiva-laravel-stack`.
+* **Lewati pertanyaan yang sudah terjawab** oleh `PRD-NARATIVE.md` (pengguna, peran, modul) dan `DESIGN_SYSTEM.md` (warna, tipografi, komponen).
+* **Jangan membuat dokumen blueprint, roadmap, atau rencana pengembangan** kecuali pemilik project memintanya. Hasil brainstorming disampaikan di chat. Jika diminta dokumen, buat singkat dan simpan sebagai `.md`.
+* Bahasa Indonesia.
 
-## When to Use This Skill
+## Gambaran
 
-- Use at the start of any new web development project or page redesign.
-- Use when scoping feature sets, user roles, and interaction patterns for web applications.
-- Use when establishing design systems, color tokens, and layout guidelines.
-- Use when evaluating tech stacks (e.g., Next.js vs. Vanilla JS, CSS Grid vs. Tailwind).
+Kerangka terstruktur untuk membahas sebuah fitur atau halaman web di awal pengerjaannya: ruang lingkup, alur pengguna, tampilan, teknis, aksesibilitas dan performa, serta batas MVP.
 
-## How It Works
+## Cara kerja
 
-Execute web project brainstorming sequentially across six structured phases. Ask the user questions one phase at a time to maintain focus and ensure thorough alignment.
+Jalankan berurutan, satu fase per giliran, dengan maksimal 3 pertanyaan per fase. Jangan menumpahkan semua fase sekaligus. Jika pemilik project belum yakin, ajukan usulan bawaan yang masuk akal dan minta konfirmasi.
 
-### Phase 1: Core Concept & Scoping
-Define the product's primary value proposition and scope:
-- **Target Audience**: Who is using the website or application?
-- **Core Value**: What problem does it solve for users?
-- **Key Features**: What are the top 3–5 mandatory features?
+### Fase 1: Konsep dan ruang lingkup
+* Siapa penggunanya (role mana di PRD) dan masalah apa yang diselesaikan?
+* Apa 3 sampai 5 kemampuan wajib?
+* Apa yang sengaja tidak dikerjakan (non-goals) agar tidak melebar?
 
-### Phase 2: User Experience (UX) & Information Architecture
-Map how users navigate and interact:
-- **Page Hierarchy**: What is the sitemap and page structure?
-- **User Journeys**: What step-by-step flows do users take to complete key goals?
-- **Responsive Layout**: Is the interface mobile-first, desktop-first, or balanced?
+### Fase 2: Pengalaman pengguna dan arsitektur informasi
+* Halaman dan rute apa saja yang dibutuhkan?
+* Bagaimana alur langkah demi langkah untuk tujuan utama, termasuk keadaan kosong, error, dan tanpa izin?
+* Mobile-first atau desktop-first? (Pengguna sering membuka dari HP.)
 
-### Phase 3: Visual Styling & Design System
-Establish the visual guidelines and aesthetic parameters:
-- **Design Aesthetic**: Modern, minimalist, brutalist, glassmorphism, or luxury?
-- **Color Palette**: What are the primary, secondary, and accent colors? (Prefer tailorable HSL/RGB models over static color keywords).
-- **Typography**: Which Google Fonts or system fonts fit the theme? (e.g., Inter, Outfit, Syne).
-- **Interactive States**: How do hovers, clicks, transitions, and loading states behave?
+### Fase 3: Tampilan
+* Ikuti `DESIGN_SYSTEM.md`. Bahas hanya hal yang belum tercakup: komponen baru, keadaan interaktif khusus, dan tata letak halaman itu.
+* Aturan logo tetap berlaku.
 
-### Phase 4: Technical Stack & Architecture
-Select the technologies and integration systems:
-- **Frontend Framework**: React, Next.js, Vite, Astro, Svelte, or Vanilla HTML/JS?
-- **Styling Method**: Vanilla CSS, Tailwind CSS, or CSS Modules?
-- **Data & Backend**: REST API, GraphQL, tRPC, Firebase, Supabase, or SQLite?
-- **State Management**: Zustand, Context API, Redux, or local React state?
+### Fase 4: Teknis (dalam batas stack tetap)
+* Model dan tabel apa yang diperlukan, relasinya, dan siapa yang boleh mengakses apa (Policy).
+* Apakah ada file upload? Simpan di disk privat dan unduh lewat controller.
+* Apakah butuh queue atau jadwal? Hanya lewat cron, tanpa proses persisten.
+* Catat risiko keamanan sejak awal: validasi input, otorisasi, dan perlindungan file.
 
-### Phase 5: SEO, Accessibility (A11y), and Performance
-Plan for discoverability and fast loading times:
-- **SEO Elements**: Title tag structure, meta descriptions, and semantic HTML tag hierarchy.
-- **Accessibility**: ARIA labels, semantic tags, keyboard navigation, and color contrast.
-- **Performance**: Preloading assets, lazy loading images, server-side rendering (SSR), and CDN delivery.
+### Fase 5: Aksesibilitas dan performa
+* Elemen HTML semantik, satu `<h1>` per halaman, label form, navigasi keyboard, kontras warna.
+* Pagination untuk daftar panjang, hindari N+1 query, gambar diberi ukuran dan dioptimalkan.
+* SEO hanya relevan untuk web profil publik, bukan portal login.
 
-### Phase 6: MVP Scope & Project Phases
-Break the work down into manageable increments:
-- **Phase 1 (MVP)**: The absolute minimum viable product needed to deploy.
-- **Phase 2 (Enhancements)**: Nice-to-have features, micro-animations, and advanced integrations.
+### Fase 6: Batas MVP
+* Apa yang paling minimal agar fitur bisa dipakai di sekolah?
+* Apa yang ditunda ke tahap berikutnya?
 
-## Examples
+## Praktik baik
 
-### Interactive Questionnaire Prompt Template
-Use this prompt layout when initiating a brainstorming session with a client or team member:
+* Ajukan pertanyaan bertahap, jangan semua fase dalam satu balasan.
+* Catat non-goals secara eksplisit untuk mencegah scope creep.
+* Rencanakan HTML semantik dan responsif dari awal.
+* Jangan menyimpan token API, password, atau kredensial di dokumen apa pun.
 
-```markdown
-👋 Let's brainstorm your new web project! We will walk through 6 quick phases.
+## Jebakan umum
 
----
-### Phase 1: Core Concept & Scoping
-1. What is the main title or working name of this project?
-2. Who are the primary target users (e.g., tech-savvy professionals, shoppers, children)?
-3. What are the 3 core tasks a user must be able to perform?
----
-```
+* **Masalah:** cakupan melebar sebelum MVP selesai. **Solusi:** tegakkan Fase 6, pindahkan hal yang bagus-kalau-ada ke tahap berikutnya.
+* **Masalah:** desain mobile baru dipikirkan di akhir. **Solusi:** bahas pola responsif di Fase 2 sebelum memilih tata letak.
+* **Masalah:** mengulang pertanyaan yang sudah dijawab PRD. **Solusi:** baca PRD dulu, tanya hanya yang masih kosong.
 
-### Brainstorming Output Document Template
-Once all phases are complete, generate a markdown blueprint for the project using this template:
+## Batasan
 
-```markdown
-# Project Blueprint: [Project Name]
-
-## 1. Product Concept
-- **Value Proposition**: [Summary]
-- **Key Features**:
-  1. [Feature 1]
-  2. [Feature 2]
-
-## 2. Information Architecture & UX
-- **Pages**: `/index.html`, `/dashboard.html`
-- **Primary User Flow**: User signs up -> completes onboarding -> views dashboard.
-
-## 3. Styling & Aesthetics
-- **Aesthetic**: Sleek Glassmorphism Dark Mode
-- **Color Tokens**:
-  - Background: `hsl(222, 47%, 11%)`
-  - Accent/Primary: `hsl(217, 91%, 60%)`
-- **Typography**: Inter (Body), Outfit (Headings)
-
-## 4. Technical Architecture
-- **Framework**: Next.js (App Router)
-- **Styling**: Tailwind CSS
-- **Database**: PostgreSQL with Prisma ORM
-
-## 5. SEO & Performance
-- **Primary Title**: "[Brand] | [Tagline]"
-- **Performance Strategy**: Dynamic image optimization, caching pages via Cloudflare.
-
-## 6. MVP vs Phase 2 Roadmap
-- **MVP**: Authentication + core dashboard view.
-- **Phase 2**: Real-time notifications and PDF reporting.
-```
-
-## Best Practices
-
-- ✅ Ask questions incrementally—never dump all six phases in a single response to avoid cognitive overload.
-- ✅ Propose logical defaults (e.g., recommending responsive Tailwind/CSS Grid and standard semantic HTML) if the user is unsure.
-- ✅ Ensure semantic HTML layout hierarchy (one `<h1>` per page, sequential `<section>`, `<article>`, `<header>`, `<footer>` elements) is planned from the start.
-- ✅ Document explicit non-goals to prevent feature creep.
-
-## Limitations
-
-- This skill focuses on conceptual mapping, architecture, and feature planning; it does not replace the writing of implementation code or system configuration.
-- Brainstorming outcomes should be treated as flexible blueprints and refined as technical constraints are discovered during development.
-
-## Security & Safety Notes
-
-- During Phase 4 (Architecture), flag any security requirements (e.g., SSL certificates, CORS policies, secure authentication storage, environment variables protection) early.
-- Do not store actual API tokens, passwords, or credentials in design or blueprint documents.
-
-## Common Pitfalls
-
-- **Problem**: Scope Creep (the project expands too quickly before building an MVP).
-  **Solution**: Enforce Phase 6 strictly. Push nice-to-have features into Phase 2.
-- **Problem**: Ignoring mobile design until late in development.
-  **Solution**: Brainstorm responsive patterns in Phase 2 before deciding on layout style in Phase 3.
-
-## Related Skills
-
-- `@writing-plans` - Organizing structural step-by-step engineering plans.
-- `@architecture-decision-records` - Documenting architectural decisions.
-- `@ux-flow` - Designing deep user experience flows and interaction details.
+* Skill ini hanya memetakan konsep, alur, dan fitur. Tidak menulis kode implementasi.
+* Hasil brainstorming adalah rancangan yang fleksibel dan diperbarui saat kendala teknis ditemukan.
