@@ -13,6 +13,8 @@
                 'title' => 'Menu Utama',
                 'items' => [
                     ['id' => 'dashboard', 'label' => 'Dashboard', 'route' => 'dashboard.admin', 'icon' => 'dashboard'],
+                    ['id' => 'surat_masuk', 'label' => 'Surat Masuk', 'route' => 'surat-masuk.index', 'icon' => 'mark_email_unread'],
+                    ['id' => 'surat_keluar', 'label' => 'Surat Keluar', 'route' => 'surat-keluar.index', 'icon' => 'outgoing_mail'],
                     ['id' => 'audit', 'label' => 'Audit', 'route' => 'dashboard.admin', 'icon' => 'fact_check', 'disabled' => true],
                     ['id' => 'basis_data', 'label' => 'Basis Data', 'route' => 'dashboard.admin', 'icon' => 'database', 'disabled' => true],
                 ]
@@ -29,9 +31,10 @@
                 'title' => 'Menu Utama',
                 'items' => [
                     ['id' => 'dashboard', 'label' => 'Dashboard', 'route' => 'dashboard.kepala-sekolah', 'icon' => 'dashboard'],
-                    ['id' => 'disposisi', 'label' => 'Disposisi', 'route' => 'dashboard.kepala-sekolah', 'icon' => 'rate_review', 'disabled' => true],
-                    ['id' => 'arsip', 'label' => 'Arsip', 'route' => 'dashboard.kepala-sekolah', 'icon' => 'folder_open', 'disabled' => true],
-                    ['id' => 'analytics', 'label' => 'Analitik Surat', 'route' => 'dashboard.kepala-sekolah.analytics', 'icon' => 'analytics'],
+                    ['id' => 'surat_masuk', 'label' => 'Disposisi Surat', 'route' => 'surat-masuk.index', 'icon' => 'rate_review'],
+                    ['id' => 'surat_keluar', 'label' => 'Surat Keluar', 'route' => 'surat-keluar.index', 'icon' => 'outgoing_mail'],
+                    ['id' => 'analytics', 'label' => 'Analitik Eksekutif', 'route' => 'dashboard.kepala-sekolah.analytics', 'icon' => 'analytics'],
+                    ['id' => 'arsip', 'label' => 'Arsip Naskah', 'route' => 'dashboard.kepala-sekolah', 'icon' => 'folder_open', 'disabled' => true],
                 ]
             ],
             [
@@ -47,9 +50,8 @@
                 'items' => [
                     ['id' => 'dashboard', 'label' => 'Dashboard', 'route' => 'dashboard.tata-usaha', 'icon' => 'dashboard'],
                     ['id' => 'surat_masuk', 'label' => 'Surat Masuk', 'route' => 'surat-masuk.index', 'icon' => 'mark_email_unread'],
-                    ['id' => 'disposisi', 'label' => 'Disposisi', 'route' => 'dashboard.tata-usaha', 'icon' => 'rate_review', 'disabled' => true],
-                    ['id' => 'arsip', 'label' => 'Arsip', 'route' => 'dashboard.tata-usaha', 'icon' => 'folder_open', 'disabled' => true],
-                    ['id' => 'surat_keluar', 'label' => 'Surat Keluar', 'route' => 'dashboard.tata-usaha', 'icon' => 'outgoing_mail', 'disabled' => true],
+                    ['id' => 'surat_keluar', 'label' => 'Surat Keluar', 'route' => 'surat-keluar.index', 'icon' => 'outgoing_mail'],
+                    ['id' => 'arsip', 'label' => 'Buku Agenda', 'route' => 'dashboard.tata-usaha', 'icon' => 'folder_open', 'disabled' => true],
                 ]
             ],
             [
@@ -64,7 +66,7 @@
                 'title' => 'Menu Utama',
                 'items' => [
                     ['id' => 'dashboard', 'label' => 'Dashboard', 'route' => 'dashboard.guru', 'icon' => 'dashboard'],
-                    ['id' => 'disposisi', 'label' => 'Tugas Disposisi', 'route' => 'dashboard.guru', 'icon' => 'assignment', 'disabled' => true],
+                    ['id' => 'disposisi', 'label' => 'Tugas Disposisi', 'route' => 'surat-masuk.index', 'icon' => 'assignment'],
                     ['id' => 'arsip', 'label' => 'Arsip Kurikulum', 'route' => 'dashboard.guru', 'icon' => 'folder_open', 'disabled' => true],
                 ]
             ],
@@ -80,8 +82,8 @@
                 'title' => 'Menu Utama',
                 'items' => [
                     ['id' => 'dashboard', 'label' => 'Dashboard', 'route' => 'dashboard.tenaga-pendidik', 'icon' => 'dashboard'],
-                    ['id' => 'instruksi', 'label' => 'Instruksi Kerja', 'route' => 'dashboard.tenaga-pendidik', 'icon' => 'task', 'disabled' => true],
-                    ['id' => 'sarpras', 'label' => 'Sarpras', 'route' => 'dashboard.tenaga-pendidik', 'icon' => 'inventory_2', 'disabled' => true],
+                    ['id' => 'instruksi', 'label' => 'Instruksi Disposisi', 'route' => 'surat-masuk.index', 'icon' => 'task'],
+                    ['id' => 'sarpras', 'label' => 'Sarpras & Fasilitas', 'route' => 'dashboard.tenaga-pendidik', 'icon' => 'inventory_2', 'disabled' => true],
                 ]
             ],
             [

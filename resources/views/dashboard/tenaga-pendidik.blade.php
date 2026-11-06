@@ -69,13 +69,23 @@
                                     <x-badge-status :status="$letter['status']" />
                                 </td>
                                 <td class="py-3 px-6 text-right whitespace-nowrap">
-                                    <button
-                                        type="button"
-                                        class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-container hover:bg-primary-container hover:text-primary transition-colors"
-                                        title="Segera hadir"
-                                    >
-                                        Lihat Tugas
-                                    </button>
+                                    @if(!empty($letter['surat_id']))
+                                        <a
+                                            href="{{ route('surat-masuk.show', $letter['surat_id']) }}"
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-surface-container hover:bg-primary-container hover:text-primary transition-colors"
+                                        >
+                                            <span>Lihat Tugas</span>
+                                            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                                        </a>
+                                    @else
+                                        <button
+                                            type="button"
+                                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-container hover:bg-primary-container hover:text-primary transition-colors"
+                                            title="Segera hadir"
+                                        >
+                                            Lihat Tugas
+                                        </button>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

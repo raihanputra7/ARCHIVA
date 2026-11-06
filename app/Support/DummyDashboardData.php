@@ -7,7 +7,7 @@ namespace App\Support;
  *
  * DUMMY: ganti saat modul surat dibangun
  * Menyediakan data statistik tiruan, daftar surat dinas, riwayat aktivitas,
- * dan repositori arsip untuk 5 dashboard peran ARCHIVA.
+ * dan repositori arsip untuk dashboard peran ARCHIVA.
  */
 class DummyDashboardData
 {
@@ -19,39 +19,39 @@ class DummyDashboardData
         return [
             [
                 'id' => 'surat_masuk',
-                'label' => 'Surat Masuk Terarsip',
+                'label' => 'Total Surat Masuk',
                 'value' => '91',
                 'unit' => 'Berkas',
                 'delta' => '+12%',
                 'trend' => 'up',
-                'subtext' => 'Bulan berjalan',
+                'subtext' => 'Terarsip di sistem ARCHIVA',
             ],
             [
-                'id' => 'disposisi',
-                'label' => 'Rata-rata Waktu Disposisi',
-                'value' => '3.4',
-                'unit' => 'Jam',
-                'delta' => '-18%',
-                'trend' => 'down',
-                'subtext' => 'Lebih cepat dari target',
-            ],
-            [
-                'id' => 'surat_keluar',
-                'label' => 'Draf & Surat Keluar',
-                'value' => '24',
-                'unit' => 'Naskah',
+                'id' => 'bulan_ini',
+                'label' => 'Surat Bulan Ini',
+                'value' => '38',
+                'unit' => 'Berkas',
                 'delta' => '+8%',
                 'trend' => 'up',
-                'subtext' => 'Telah terverifikasi',
+                'subtext' => 'Periode berjalan Oktober 2026',
             ],
             [
-                'id' => 'arsip_digital',
-                'label' => 'Koleksi Berkas Digital',
-                'value' => '142',
-                'unit' => 'Dokumen',
-                'delta' => '+5%',
+                'id' => 'top_kategori',
+                'label' => 'Kategori Terbanyak',
+                'value' => 'Dinas',
+                'unit' => '38 Berkas',
+                'delta' => 'Dominan',
                 'trend' => 'up',
-                'subtext' => 'Tersimpan di storage privat',
+                'subtext' => 'Disdik & Kementerian',
+            ],
+            [
+                'id' => 'arsip_terakhir',
+                'label' => 'Nomor Arsip Terakhir',
+                'value' => 'ARC/SM/0008',
+                'unit' => 'Otomatis',
+                'delta' => 'Terbaru',
+                'trend' => 'up',
+                'subtext' => 'Nomor urut otomatis sistem',
             ],
         ];
     }
@@ -73,6 +73,8 @@ class DummyDashboardData
                 'recipient' => 'Pak Ahmad Fauzi & Guru Kelas 5',
                 'urgency' => 'Penting',
                 'category' => 'Dinas',
+                'file_name' => 'edaran-anbk-2026.pdf',
+                'file_size' => '2.4 MB',
             ],
             [
                 'id' => 'ARC/SM/202610/0002',
@@ -85,6 +87,8 @@ class DummyDashboardData
                 'recipient' => 'Ibu Ratna Dewi, S.Pd.',
                 'urgency' => 'Biasa',
                 'category' => 'Undangan',
+                'file_name' => 'undangan-bimtek-bgp.pdf',
+                'file_size' => '1.1 MB',
             ],
             [
                 'id' => 'ARC/SK/202610/0003',
@@ -97,6 +101,8 @@ class DummyDashboardData
                 'recipient' => 'Seluruh Tenaga Pendidik & Kependidikan',
                 'urgency' => 'Penting',
                 'category' => 'SK Tugas',
+                'file_name' => 'sk-zona-kebersihan-gedung.pdf',
+                'file_size' => '850 KB',
             ],
             [
                 'id' => 'ARC/SM/202610/0004',
@@ -109,6 +115,8 @@ class DummyDashboardData
                 'recipient' => 'Koordinator UKS & Guru Kelas Rendah',
                 'urgency' => 'Biasa',
                 'category' => 'Kesehatan',
+                'file_name' => 'jadwal-imunisasi-puskesmas.pdf',
+                'file_size' => '620 KB',
             ],
             [
                 'id' => 'ARC/SM/202610/0005',
@@ -121,6 +129,50 @@ class DummyDashboardData
                 'recipient' => 'Budi Santoso (TU Keuangan)',
                 'urgency' => 'Penting',
                 'category' => 'Keuangan',
+                'file_name' => 'verifikasi-bos-tahap-2.pdf',
+                'file_size' => '3.8 MB',
+            ],
+            [
+                'id' => 'ARC/SM/202610/0006',
+                'number' => '420/567/Sudin-JB1/2026',
+                'sender' => 'Suku Dinas Pendidikan Wilayah II Jakarta Barat',
+                'subject' => 'Instruksi Pemutakhiran Data Sarana Prasarana Aplikasi Dapodikdasmen',
+                'date' => '16 Okt 2026',
+                'received_at' => '16 Okt 2026, 08:30 WIB',
+                'status' => 'Diproses',
+                'recipient' => 'Budi Santoso (Operator Dapodik)',
+                'urgency' => 'Penting',
+                'category' => 'Dinas',
+                'file_name' => 'edaran-dapodik-sarpras.pdf',
+                'file_size' => '1.5 MB',
+            ],
+            [
+                'id' => 'ARC/SM/202610/0007',
+                'number' => '005/112/K3S/2026',
+                'sender' => 'Kelompok Kerja Kepala Sekolah (K3S) Palmerah',
+                'subject' => 'Rapat Koordinasi Evaluasi Kurikulum Merdeka Semester Ganjil 2026/2027',
+                'date' => '15 Okt 2026',
+                'received_at' => '15 Okt 2026, 11:15 WIB',
+                'status' => 'Didisposisikan',
+                'recipient' => 'Dra. Siti Nurhaliza, M.Pd.',
+                'urgency' => 'Biasa',
+                'category' => 'Undangan',
+                'file_name' => 'undangan-k3s-palmerah.pdf',
+                'file_size' => '740 KB',
+            ],
+            [
+                'id' => 'ARC/SM/202610/0008',
+                'number' => '028/89/Komite/2026',
+                'sender' => 'Komite SDN Jatipulo 07 Jakarta',
+                'subject' => 'Permohonan Audiensi Rencana Pemanfaatan Aula Serbaguna Lantai 4',
+                'date' => '14 Okt 2026',
+                'received_at' => '14 Okt 2026, 14:00 WIB',
+                'status' => 'Diterima',
+                'recipient' => 'Kepala Sekolah & Tim Sarpras',
+                'urgency' => 'Biasa',
+                'category' => 'Dinas',
+                'file_name' => 'surat-komite-audiensi.pdf',
+                'file_size' => '510 KB',
             ],
         ];
     }
