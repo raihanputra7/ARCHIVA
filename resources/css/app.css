@@ -1,3 +1,105 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import '@fontsource-variable/plus-jakarta-sans';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Nilai mode terang */
+:root {
+  --surface: #F8F9FB;
+  --surface-lowest: #FFFFFF;
+  --surface-container-low: #F1F4F9;
+  --surface-container: #E8EDF5;
+  --surface-container-high: #DDE4F0;
+  --on-surface: #0F1B2D;
+  --on-surface-variant: #4A5163;
+  --outline: #757B8A;
+  --outline-variant: #C8CDD8;
+  --border-subtle: #E2E8F0;
+  --primary: #1B3A6B;
+  --on-primary: #FFFFFF;
+  --primary-container: #E3EAF6;
+  --on-primary-container: #0F2347;
+  --secondary: #C9A84C;
+  --on-secondary: #0F2347;
+  --secondary-container: #FBF1D3;
+  --on-secondary-container: #5C4710;
+  --error: #BA1A1A;
+  --error-container: #FFDAD6;
+  --on-error-container: #93000A;
+  --success: #1E7B4F;
+  --success-container: #DDF3E7;
+  --on-success-container: #0F4D2F;
+  --warning: #8A6D1F;
+}
+
+/* Nilai mode gelap */
+.dark {
+  --surface: #0B1730;
+  --surface-lowest: #101F3D;
+  --surface-container-low: #13244A;
+  --surface-container: #182B54;
+  --surface-container-high: #1F355F;
+  --on-surface: #E6ECF7;
+  --on-surface-variant: #AAB4C8;
+  --outline: #7D87A0;
+  --outline-variant: #2C3E63;
+  --border-subtle: #22345A;
+  --primary: #A9C0EC;
+  --on-primary: #0F2347;
+  --primary-container: #1B3A6B;
+  --on-primary-container: #D6E2FA;
+  --secondary: #E8C97A;
+  --on-secondary: #0F2347;
+  --error: #FFB4AB;
+  --success: #7FD6A5;
+  --warning: #E8C97A;
+}
+
+/* Petakan ke utility Tailwind: bg-surface, text-on-surface, bg-primary, dst. */
+@theme inline {
+  --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-surface: var(--surface);
+  --color-surface-lowest: var(--surface-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-border-subtle: var(--border-subtle);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-secondary: var(--secondary);
+  --color-on-secondary: var(--on-secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-error: var(--error);
+  --color-error-container: var(--error-container);
+  --color-on-error-container: var(--on-error-container);
+  --color-success: var(--success);
+  --color-success-container: var(--success-container);
+  --color-on-success-container: var(--on-success-container);
+  --color-warning: var(--warning);
+}
+
+/* Warna brand tetap (tidak berubah antar mode) */
+@theme {
+  --color-navy: #1B3A6B;
+  --color-navy-dark: #0F2347;
+  --color-gold: #C9A84C;
+  --color-gold-light: #E8C97A;
+  --color-gold-text: #8A6D1F;
+
+  --shadow-sm: 0 1px 2px rgba(15, 35, 71, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 35, 71, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 35, 71, 0.12);
+}
+
+body {
+  background-color: var(--surface);
+  color: var(--on-surface);
+}

@@ -1,6 +1,36 @@
-
-
 import Alpine from 'alpinejs';
+
+document.addEventListener('alpine:init', () => {
+    Alpine.store('theme', {
+        dark: localStorage.getItem('archiva_theme') === 'dark' || (!('archiva_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),
+        init() {
+            if (this.dark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        },
+        toggle() {
+            this.dark = !this.dark;
+            localStorage.setItem('archiva_theme', this.dark ? 'dark' : 'light');
+            if (this.dark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+    });
+
+    Alpine.store('sidebar', {
+        open: false,
+        toggle() {
+            this.open = !this.open;
+        },
+        close() {
+            this.open = false;
+        }
+    });
+});
 
 window.Alpine = Alpine;
 
