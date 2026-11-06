@@ -6,28 +6,23 @@
 ])
 
 @php
-    $heightClass = match($size) {
+    $imgHeightClass = match($size) {
         'sm' => 'h-8',
         'lg' => 'h-12',
         default => 'h-10',
-    };
-
-    $iconBoxSize = match($size) {
-        'sm' => 'w-8 h-8',
-        'lg' => 'w-12 h-12',
-        default => 'w-10 h-10',
     };
 
     $isOnDark = $variant === 'on-dark';
 @endphp
 
 {{-- 
-    DESIGN_SYSTEM.md Bagian 1:
-    - Latar logo selalu terang (#FFFFFF).
-    - Bila area sekitar gelap (termasuk mode gelap atau variant on-dark), WAJIB memakai panel putih rounded-xl p-2.
-    - Ruang bebas minimal 0.5x tinggi logo di keempat sisi.
-    - Ukuran minimum 32px (sm), default 40px (md).
-    - Placeholder resmi digunakan karena logo asli sekolah belum tersedia di _legacy maupun public/images.
+    DESIGN_SYSTEM.md Bagian 1: Aturan Logo (prioritas tertinggi)
+    1. Latar logo selalu terang (#FFFFFF).
+    2. Bila area sekitar gelap (mode gelap, panel kiri login, footer navy), WAJIB memakai panel putih rounded-xl p-2.
+    3. Ruang bebas minimal 0.5x tinggi logo di keempat sisi.
+    4. Ukuran minimum 32px (sm), default 40px (md).
+    5. Aspect ratio dijaga (object-contain, w-auto), tidak di-stretch atau crop.
+    6. Logo resmi SDN Jatipulo 07: public/images/logo-sdn-jatipulo07.png.
 --}}
 <div {{ $attributes->merge([
     'class' => 'inline-flex items-center gap-3 select-none transition-colors ' . 
@@ -35,15 +30,13 @@
             ? 'bg-[#FFFFFF] text-[#0F1B2D] rounded-xl p-2 shadow-sm' 
             : 'dark:bg-[#FFFFFF] dark:text-[#0F1B2D] dark:rounded-xl dark:p-2 dark:shadow-sm')
 ]) }}>
-    <div class="flex-shrink-0 flex items-center justify-center {{ $iconBoxSize }} rounded-lg bg-[#E3EAF6] text-[#1B3A6B] border border-[#C8CDD8]"
-         title="Placeholder Logo Resmi SDN Jatipulo 07">
-        <svg class="w-3/5 h-3/5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
-            <path d="M6 6h10"></path>
-            <path d="M6 10h10"></path>
-            <path d="M6 14h6"></path>
-            <path d="M18 2v20"></path>
-        </svg>
+    <div class="flex-shrink-0 flex items-center justify-center">
+        <img
+            src="{{ asset('images/logo-sdn-jatipulo07.png') }}"
+            alt="Logo SDN Jatipulo 07"
+            class="{{ $imgHeightClass }} w-auto object-contain flex-shrink-0"
+            loading="eager"
+        >
     </div>
 
     @if($showText)
@@ -58,4 +51,3 @@
         </div>
     @endif
 </div>
-

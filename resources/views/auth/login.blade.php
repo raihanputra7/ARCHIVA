@@ -4,7 +4,10 @@
         password: '',
         fillRole(roleEmail) {
             this.email = roleEmail;
-            this.password = 'archiva123';
+            this.password = '';
+            this.$nextTick(() => {
+                document.getElementById('password')?.focus();
+            });
         }
     }">
         <!-- Floating Theme Toggle for Login Page -->

@@ -1,4 +1,7 @@
 import Alpine from 'alpinejs';
+import Chart from 'chart.js/auto';
+
+window.Chart = Chart;
 
 document.addEventListener('alpine:init', () => {
     Alpine.store('theme', {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Role;
+use App\Support\DummyDashboardData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -29,7 +30,11 @@ class DashboardController extends Controller
      */
     public function admin(): View
     {
-        return view('dashboard.admin');
+        return view('dashboard.admin', [
+            'kpis' => DummyDashboardData::getKpis(),
+            'activities' => DummyDashboardData::getAuditActivities(),
+            'repositories' => DummyDashboardData::getRepositories(),
+        ]);
     }
 
     /**
@@ -37,7 +42,12 @@ class DashboardController extends Controller
      */
     public function kepalaSekolah(): View
     {
-        return view('dashboard.kepala-sekolah');
+        return view('dashboard.kepala-sekolah', [
+            'kpis' => DummyDashboardData::getKpis(),
+            'letters' => DummyDashboardData::getRecentLetters(),
+            'chartData' => DummyDashboardData::getChartData(),
+            'activities' => DummyDashboardData::getAuditActivities(),
+        ]);
     }
 
     /**
@@ -45,7 +55,12 @@ class DashboardController extends Controller
      */
     public function tataUsaha(): View
     {
-        return view('dashboard.tata-usaha');
+        return view('dashboard.tata-usaha', [
+            'kpis' => DummyDashboardData::getKpis(),
+            'letters' => DummyDashboardData::getRecentLetters(),
+            'chartData' => DummyDashboardData::getChartData(),
+            'repositories' => DummyDashboardData::getRepositories(),
+        ]);
     }
 
     /**
@@ -53,7 +68,11 @@ class DashboardController extends Controller
      */
     public function guru(): View
     {
-        return view('dashboard.guru');
+        return view('dashboard.guru', [
+            'kpis' => DummyDashboardData::getKpis(),
+            'letters' => array_filter(DummyDashboardData::getRecentLetters(), fn ($item) => in_array($item['category'], ['Dinas', 'Undangan', 'Kurikulum', 'SK Tugas'])),
+            'repositories' => DummyDashboardData::getRepositories(),
+        ]);
     }
 
     /**
@@ -61,6 +80,10 @@ class DashboardController extends Controller
      */
     public function tenagaPendidik(): View
     {
-        return view('dashboard.tenaga-pendidik');
+        return view('dashboard.tenaga-pendidik', [
+            'kpis' => DummyDashboardData::getKpis(),
+            'letters' => array_filter(DummyDashboardData::getRecentLetters(), fn ($item) => in_array($item['category'], ['SK Tugas', 'Kesehatan', 'Dinas'])),
+            'repositories' => DummyDashboardData::getRepositories(),
+        ]);
     }
 }
