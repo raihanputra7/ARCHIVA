@@ -281,46 +281,69 @@
                 <form method="POST" action="{{ route('surat-masuk.store') }}" enctype="multipart/form-data" class="p-6 space-y-4">
                     @csrf
 
+                    <!-- 1. Asal Surat & Nomor Surat -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="asal_input" class="block text-sm font-semibold text-on-surface mb-1.5">
+                                Asal Surat <span class="text-error">*</span>
+                            </label>
+                            <select
+                                id="asal_input"
+                                name="asal"
+                                class="w-full h-11 px-3.5 rounded-lg text-sm bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
+                                required
+                            >
+                                <option value="eksternal" {{ old('asal') === 'eksternal' ? 'selected' : '' }}>Eksternal (Instansi / Lembaga Luar)</option>
+                                <option value="internal" {{ old('asal') === 'internal' ? 'selected' : '' }}>Internal (Warga / Unit Sekolah)</option>
+                            </select>
+                        </div>
+
                         <x-input
-                            name="nomor_surat_asli"
-                            label="Nomor Surat Pengirim (Opsional)"
+                            name="nomor_surat"
+                            label="Nomor Surat Resmi (Opsional)"
                             placeholder="Contoh: 421.2/108/Disdik/2026"
-                        />
-                        <x-input
-                            name="pengirim"
-                            label="Asal / Pengirim Surat"
-                            placeholder="Contoh: Dinas Pendidikan DKI Jakarta"
-                            required
+                            value="{{ old('nomor_surat') }}"
                         />
                     </div>
 
-                    <div>
+                    <!-- 2. Pengirim & Perihal -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <x-input
+                            name="pengirim"
+                            label="Asal Instansi / Nama Pengirim"
+                            placeholder="Contoh: Dinas Pendidikan DKI Jakarta / Komite"
+                            value="{{ old('pengirim') }}"
+                            required
+                        />
+
                         <x-input
                             name="perihal"
                             label="Perihal Surat"
                             placeholder="Contoh: Undangan Rapat Koordinasi ANBK 2026"
+                            value="{{ old('perihal') }}"
                             required
                         />
                     </div>
 
+                    <!-- 3. Tanggal Surat & Tanggal Diterima -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <x-input
                             type="date"
                             name="tanggal_surat"
                             label="Tanggal Surat"
-                            value="{{ date('Y-m-d') }}"
+                            value="{{ old('tanggal_surat', date('Y-m-d')) }}"
                             required
                         />
                         <x-input
                             type="date"
                             name="tanggal_diterima"
                             label="Tanggal Diterima TU"
-                            value="{{ date('Y-m-d') }}"
+                            value="{{ old('tanggal_diterima', date('Y-m-d')) }}"
                             required
                         />
                     </div>
 
+                    <!-- 4. Kategori & Sifat -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label for="kategori_input" class="block text-sm font-semibold text-on-surface mb-1.5">
@@ -332,23 +355,25 @@
                                 class="w-full h-11 px-3.5 rounded-lg text-sm bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
                                 required
                             >
-                                <option value="Dinas">Dinas</option>
-                                <option value="Undangan">Undangan</option>
-                                <option value="Kurikulum">Kurikulum</option>
-                                <option value="Keuangan">Keuangan / BOS</option>
-                                <option value="Kesehatan">Kesehatan</option>
-                                <option value="SK Tugas">SK Tugas</option>
+                                <option value="Dinas">Surat Dinas / Kedinasan Resmi</option>
+                                <option value="Undangan">Surat Undangan Rapat / Kegiatan</option>
+                                <option value="Edaran">Surat Edaran</option>
+                                <option value="Pemberitahuan">Surat Pemberitahuan</option>
+                                <option value="Permohonan">Surat Permohonan / Kerjasama</option>
+                                <option value="SK Tugas">Surat Keputusan / Tugas</option>
+                                <option value="Lainnya">Lainnya</option>
                             </select>
                         </div>
 
                         <div>
                             <label for="sifat_input" class="block text-sm font-semibold text-on-surface mb-1.5">
-                                Tingkat Urgensi / Sifat
+                                Sifat Urgensi <span class="text-error">*</span>
                             </label>
                             <select
                                 id="sifat_input"
                                 name="sifat"
                                 class="w-full h-11 px-3.5 rounded-lg text-sm bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
+                                required
                             >
                                 <option value="Biasa">Biasa</option>
                                 <option value="Segera">Segera</option>
@@ -358,23 +383,51 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label for="catatan" class="block text-sm font-semibold text-on-surface mb-1.5">
-                            Catatan Khusus Petugas TU (Opsional)
-                        </label>
-                        <textarea
-                            id="catatan"
-                            name="catatan"
-                            rows="2"
-                            placeholder="Catatan tambahan mengenai kondisi fisik surat atau penyampaian berkas..."
-                            class="w-full p-3 rounded-lg text-sm bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
-                        ></textarea>
-                    </div>
-
-                    <!-- Upload Berkas Lampiran -->
+                    <!-- 5. Penerima Surat (Default: Kepala Sekolah) -->
                     <div>
                         <label class="block text-sm font-semibold text-on-surface mb-1.5">
-                            Unggah Pindaian / Berkas Naskah (PDF, JPG, PNG - Maks. 5 MB)
+                            Tujuan Penerima Surat <span class="text-error">*</span>
+                        </label>
+                        <p class="text-[11px] text-on-surface-variant mb-2">Pilih pihak yang menerima tembusan/tugas surat masuk ini (Otomatis ditujukan ke Kepala Sekolah secara default).</p>
+                        <div class="max-h-36 overflow-y-auto p-3 rounded-lg border border-outline-variant bg-surface-container-low/40 space-y-2">
+                            @forelse($recipientCandidates as $candidate)
+                                <label class="flex items-center gap-2.5 text-xs text-on-surface cursor-pointer hover:text-primary transition-colors select-none">
+                                    <input
+                                        type="checkbox"
+                                        name="penerima_ids[]"
+                                        value="{{ $candidate->id }}"
+                                        {{ $candidate->role->value === 'kepala_sekolah' ? 'checked' : '' }}
+                                        class="rounded border-outline-variant text-primary focus:ring-primary"
+                                    >
+                                    <span class="font-medium">{{ $candidate->name }}</span>
+                                    <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">
+                                        {{ $candidate->role->label() }}
+                                    </span>
+                                </label>
+                            @empty
+                                <p class="text-xs text-on-surface-variant">Tidak ada daftar pengguna yang tersedia.</p>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <!-- 6. Ringkasan Isi Surat -->
+                    <div>
+                        <label for="ringkasan" class="block text-sm font-semibold text-on-surface mb-1.5">
+                            Ringkasan / Catatan Isi Surat (Opsional)
+                        </label>
+                        <textarea
+                            id="ringkasan"
+                            name="ringkasan"
+                            rows="2"
+                            placeholder="Uraian singkat pokok surat dinas untuk memudahkan penelusuran arsip..."
+                            class="w-full p-3 rounded-lg text-sm bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
+                        >{{ old('ringkasan') }}</textarea>
+                    </div>
+
+                    <!-- 7. Unggah Berkas Pindaian / Foto Surat -->
+                    <div>
+                        <label class="block text-sm font-semibold text-on-surface mb-1.5">
+                            Unggah Pindaian / Berkas Fisik Surat (PDF, JPG, PNG - Maks. 5 MB)
                         </label>
                         <input
                             type="file"
@@ -382,7 +435,7 @@
                             accept=".pdf,.jpg,.jpeg,.png"
                             class="w-full text-xs text-on-surface file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-container file:text-primary hover:file:bg-primary hover:file:text-on-primary cursor-pointer border border-outline-variant rounded-lg p-1.5 bg-surface-container-low"
                         >
-                        <p class="text-[11px] text-on-surface-variant mt-1">Berkas disimpan secara aman di storage privat dinas.</p>
+                        <p class="text-[11px] text-on-surface-variant mt-1">Berkas disimpan secara aman di storage privat dinas dengan penamaan acak terenkripsi.</p>
                     </div>
 
                     <div class="pt-4 border-t border-border-subtle flex items-center justify-end gap-3">

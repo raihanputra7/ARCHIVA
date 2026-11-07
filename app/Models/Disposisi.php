@@ -14,12 +14,15 @@ class Disposisi extends Model
 
     protected $fillable = [
         'surat_masuk_id',
+        'dari_user_id',
+        'ke_user_id',
         'from_user_id',
         'to_user_id',
         'instruksi',
         'sifat',
         'batas_waktu',
         'status',
+        'status_tindak_lanjut',
         'catatan_tindak_lanjut',
         'selesai_pada',
     ];
@@ -37,6 +40,16 @@ class Disposisi extends Model
         return $this->belongsTo(SuratMasuk::class, 'surat_masuk_id');
     }
 
+    public function dariUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'dari_user_id');
+    }
+
+    public function keUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'ke_user_id');
+    }
+
     public function fromUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'from_user_id');
@@ -45,5 +58,12 @@ class Disposisi extends Model
     public function toUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'to_user_id');
+    }
+
+    public function isTerlambat(): bool
+    {
+        $status = strtolower((string) ($this->status_tindak_lanjut ?? $this->status));
+
+        return $status !== 'selesai' && $this->batas_waktu && $this->batas_waktu->isPast();
     }
 }

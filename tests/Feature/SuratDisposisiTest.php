@@ -3,10 +3,13 @@
 namespace Tests\Feature;
 
 use App\Enums\Role;
+use App\Enums\StatusSurat;
 use App\Models\Disposisi;
+use App\Models\RiwayatStatus;
 use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use App\Models\User;
+use App\Services\SuratMasukService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -65,6 +68,30 @@ class SuratDisposisiTest extends TestCase
         $response2->assertRedirect(route('login'));
     }
 
+    public function test_admin_cannot_access_surat_masuk_archive(): void
+    {
+        // Kebijakan hak akses: Admin tidak mengelola arsip surat dinas (hanya kelola pengguna)
+        $response = $this->actingAs($this->admin)->get(route('surat-masuk.index'));
+        $response->assertForbidden();
+
+        $surat = SuratMasuk::create([
+            'nomor_agenda' => 'ARC/SM/2026/9999',
+            'pengirim' => 'Disdik',
+            'perihal' => 'Uji Akses Admin',
+            'tanggal_surat' => now(),
+            'tanggal_diterima' => now(),
+            'asal' => 'eksternal',
+            'kategori' => 'Dinas',
+            'sifat' => 'Biasa',
+            'status' => 'diterima',
+            'created_by' => $this->tu->id,
+            'dicatat_oleh' => $this->tu->id,
+        ]);
+
+        $responseShow = $this->actingAs($this->admin)->get(route('surat-masuk.show', $surat));
+        $responseShow->assertForbidden();
+    }
+
     public function test_tata_usaha_can_create_surat_masuk_with_file_upload(): void
     {
         Storage::fake('local');
@@ -72,31 +99,102 @@ class SuratDisposisiTest extends TestCase
         $fakePdf = UploadedFile::fake()->create('surat_edaran.pdf', 500, 'application/pdf');
 
         $response = $this->actingAs($this->tu)->post(route('surat-masuk.store'), [
+            'nomor_surat' => '005/TEST/2026',
             'nomor_surat_asli' => '005/TEST/2026',
+            'asal' => 'eksternal',
             'pengirim' => 'Dinas Pendidikan DKI',
             'perihal' => 'Instruksi Penguatan Karakter',
+            'ringkasan' => 'Pelaksanaan program karakter budi pekerti semester ganjil.',
             'tanggal_surat' => '2026-11-01',
             'tanggal_diterima' => '2026-11-02',
             'kategori' => 'Dinas',
             'sifat' => 'Biasa',
+            'penerima_ids' => [$this->kepsek->id],
             'berkas' => $fakePdf,
         ]);
 
-        $surat = SuratMasuk::where('nomor_surat_asli', '005/TEST/2026')->first();
+        $surat = SuratMasuk::where('nomor_surat', '005/TEST/2026')->first();
         $this->assertNotNull($surat);
         $this->assertStringStartsWith('ARC/SM/', $surat->nomor_agenda);
         $this->assertEquals('Dinas', $surat->kategori);
+        $this->assertEquals('eksternal', $surat->asal);
         $this->assertEquals($this->tu->id, $surat->created_by);
         $this->assertNotNull($surat->file_path);
 
         Storage::disk('local')->assertExists($surat->file_path);
 
+        // Verifikasi tabel pivot surat_penerima
+        $this->assertTrue($surat->penerima()->where('users.id', $this->kepsek->id)->exists());
+
+        // Verifikasi baris pertama riwayat_status (status diterima)
+        $riwayatPertama = RiwayatStatus::where('surat_masuk_id', $surat->id)->first();
+        $this->assertNotNull($riwayatPertama);
+        $this->assertEquals(StatusSurat::DITERIMA->value, $riwayatPertama->ke_status);
+        $this->assertNull($riwayatPertama->dari_status);
+        $this->assertEquals($this->tu->id, $riwayatPertama->user_id);
+
         $response->assertRedirect(route('surat-masuk.index'));
+    }
+
+    public function test_upload_validation_rejects_invalid_type_and_oversize(): void
+    {
+        Storage::fake('local');
+
+        // 1. Ekstensi tidak diizinkan (misal: .exe atau .txt)
+        $badFile = UploadedFile::fake()->create('malicious.exe', 100, 'application/x-msdownload');
+        $responseBadExt = $this->actingAs($this->tu)->post(route('surat-masuk.store'), [
+            'asal' => 'eksternal',
+            'pengirim' => 'Pihak Luar',
+            'perihal' => 'Uji File Salah',
+            'tanggal_surat' => '2026-11-01',
+            'tanggal_diterima' => '2026-11-02',
+            'kategori' => 'Dinas',
+            'sifat' => 'Biasa',
+            'berkas' => $badFile,
+        ]);
+        $responseBadExt->assertSessionHasErrors('berkas');
+
+        // 2. Ukuran melebihi batas 5 MB (misal 6 MB = 6144 KB)
+        $oversizeFile = UploadedFile::fake()->create('big_doc.pdf', 6144, 'application/pdf');
+        $responseOversize = $this->actingAs($this->tu)->post(route('surat-masuk.store'), [
+            'asal' => 'eksternal',
+            'pengirim' => 'Pihak Luar',
+            'perihal' => 'Uji File Kebesaran',
+            'tanggal_surat' => '2026-11-01',
+            'tanggal_diterima' => '2026-11-02',
+            'kategori' => 'Dinas',
+            'sifat' => 'Biasa',
+            'berkas' => $oversizeFile,
+        ]);
+        $responseOversize->assertSessionHasErrors('berkas');
+    }
+
+    public function test_penomoran_agenda_berurutan_per_tahun(): void
+    {
+        $service = app(SuratMasukService::class);
+
+        $surat1 = SuratMasuk::create([
+            'nomor_agenda' => 'ARC/SM/2026/0001',
+            'pengirim' => 'Disdik',
+            'perihal' => 'Surat 1',
+            'tanggal_surat' => '2026-01-01',
+            'tanggal_diterima' => '2026-01-02',
+            'asal' => 'eksternal',
+            'kategori' => 'Dinas',
+            'sifat' => 'Biasa',
+            'status' => 'diterima',
+            'created_by' => $this->tu->id,
+            'dicatat_oleh' => $this->tu->id,
+        ]);
+
+        $nextNomor = $service->generateNomorAgenda(2026);
+        $this->assertEquals('ARC/SM/2026/0002', $nextNomor);
     }
 
     public function test_guru_cannot_create_surat_masuk(): void
     {
         $response = $this->actingAs($this->guru)->post(route('surat-masuk.store'), [
+            'asal' => 'internal',
             'pengirim' => 'Pihak Luar',
             'perihal' => 'Pengujian Otorisasi',
             'tanggal_surat' => '2026-11-01',
@@ -108,6 +206,47 @@ class SuratDisposisiTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_status_terlambat_dihitung_dari_batas_waktu_lewat(): void
+    {
+        $surat = SuratMasuk::create([
+            'nomor_agenda' => 'ARC/SM/2026/0099',
+            'pengirim' => 'Inspektorat',
+            'perihal' => 'Uji Kasus Terlambat',
+            'tanggal_surat' => now()->subDays(10),
+            'tanggal_diterima' => now()->subDays(8),
+            'asal' => 'eksternal',
+            'kategori' => 'Dinas',
+            'sifat' => 'Kilat',
+            'status' => StatusSurat::DIPROSES->value,
+            'created_by' => $this->tu->id,
+            'dicatat_oleh' => $this->tu->id,
+        ]);
+
+        // Disposisi dengan batas waktu kemarin (sudah lewat) dan status masih diproses
+        $disp = Disposisi::create([
+            'surat_masuk_id' => $surat->id,
+            'dari_user_id' => $this->kepsek->id,
+            'ke_user_id' => $this->guru->id,
+            'from_user_id' => $this->kepsek->id,
+            'to_user_id' => $this->guru->id,
+            'instruksi' => 'Harap selesaikan segera',
+            'sifat' => 'Kilat',
+            'batas_waktu' => now()->subDays(2),
+            'status' => 'diproses',
+            'status_tindak_lanjut' => 'diproses',
+        ]);
+
+        $this->assertTrue($surat->isTerlambat());
+        $this->assertTrue($disp->isTerlambat());
+
+        // Jika status surat atau disposisi telah selesai, tidak lagi dianggap terlambat
+        $disp->update(['status_tindak_lanjut' => 'selesai', 'status' => 'selesai']);
+        $surat->update(['status' => StatusSurat::SELESAI->value]);
+
+        $this->assertFalse($surat->isTerlambat());
+        $this->assertFalse($disp->isTerlambat());
+    }
+
     public function test_kepala_sekolah_can_create_disposisi(): void
     {
         $surat = SuratMasuk::create([
@@ -116,6 +255,7 @@ class SuratDisposisiTest extends TestCase
             'perihal' => 'Persiapan Lomba Sains',
             'tanggal_surat' => now(),
             'tanggal_diterima' => now(),
+            'asal' => 'eksternal',
             'kategori' => 'Lomba',
             'sifat' => 'Segera',
             'status' => 'Diterima',
@@ -152,6 +292,7 @@ class SuratDisposisiTest extends TestCase
             'perihal' => 'Uji Otorisasi Disposisi',
             'tanggal_surat' => now(),
             'tanggal_diterima' => now(),
+            'asal' => 'eksternal',
             'kategori' => 'Dinas',
             'sifat' => 'Biasa',
             'status' => 'Diterima',
@@ -175,6 +316,7 @@ class SuratDisposisiTest extends TestCase
             'perihal' => 'Pembaruan Dapodik',
             'tanggal_surat' => now(),
             'tanggal_diterima' => now(),
+            'asal' => 'eksternal',
             'kategori' => 'Dinas',
             'sifat' => 'Penting',
             'status' => 'Didisposisikan',
@@ -225,10 +367,12 @@ class SuratDisposisiTest extends TestCase
         $surat = SuratMasuk::create([
             'nomor_agenda' => 'ARC/SM/TEST/0004',
             'nomor_surat_asli' => '421/099/TEST/2026',
+            'nomor_surat' => '421/099/TEST/2026',
             'pengirim' => 'Dinas Pendidikan DKI Jakarta',
             'perihal' => 'Undangan Rapat Koordinasi Kepala Sekolah',
             'tanggal_surat' => now(),
             'tanggal_diterima' => now(),
+            'asal' => 'eksternal',
             'kategori' => 'Undangan',
             'sifat' => 'Penting',
             'status' => 'Didisposisikan',
