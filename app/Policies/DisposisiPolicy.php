@@ -24,7 +24,12 @@ class DisposisiPolicy
 
     public function create(User $user): bool
     {
-        return $user->hasRole(Role::ADMIN, Role::KEPALA_SEKOLAH);
+        return $user->hasRole(
+            Role::ADMIN,
+            Role::KEPALA_SEKOLAH,
+            Role::TATA_USAHA,
+            Role::GURU
+        );
     }
 
     public function updateStatus(User $user, Disposisi $disposisi): bool

@@ -14,6 +14,7 @@ class SuratKeluar extends Model
 
     protected $fillable = [
         'nomor_agenda',
+        'parent_surat_masuk_id',
         'nomor_surat',
         'tujuan',
         'perihal',
@@ -47,5 +48,13 @@ class SuratKeluar extends Model
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Surat masuk yang menjadi rujukan / asal balasan naskah keluar ini.
+     */
+    public function parentSuratMasuk(): BelongsTo
+    {
+        return $this->belongsTo(SuratMasuk::class, 'parent_surat_masuk_id');
     }
 }

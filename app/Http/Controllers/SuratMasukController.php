@@ -137,6 +137,7 @@ class SuratMasukController extends Controller
             'disposisi.fromUser',
             'disposisi.toUser',
             'riwayatStatus.user',
+            'suratKeluar.creator',
         ]);
 
         $assignableUsers = User::whereIn('role', [Role::GURU, Role::TATA_USAHA, Role::TENAGA_PENDIDIK])

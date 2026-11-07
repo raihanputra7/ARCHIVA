@@ -77,6 +77,19 @@ class SuratMasuk extends Model
         return $this->hasMany(Disposisi::class, 'surat_masuk_id');
     }
 
+    /**
+     * Seluruh naskah dinas surat keluar yang menjadi balasan dari surat masuk ini.
+     */
+    public function suratKeluar(): HasMany
+    {
+        return $this->hasMany(SuratKeluar::class, 'parent_surat_masuk_id');
+    }
+
+    public function suratBalasan(): HasMany
+    {
+        return $this->suratKeluar();
+    }
+
     public function latestDisposisi(): HasOne
     {
         return $this->hasOne(Disposisi::class, 'surat_masuk_id')->latestOfMany();

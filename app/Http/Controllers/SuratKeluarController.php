@@ -22,7 +22,7 @@ class SuratKeluarController extends Controller
     {
         Gate::authorize('viewAny', SuratKeluar::class);
 
-        $query = SuratKeluar::with(['creator', 'approver'])
+        $query = SuratKeluar::with(['creator', 'approver', 'parentSuratMasuk'])
             ->latest('tanggal_surat');
 
         if ($request->filled('q')) {
@@ -41,6 +41,11 @@ class SuratKeluarController extends Controller
 
         $suratKeluar = $query->paginate(10)->withQueryString();
 
+        $parentSuratMasuk = null;
+        if ($request->filled('parent_surat_masuk_id')) {
+            $parentSuratMasuk = \App\Models\SuratMasuk::find($request->integer('parent_surat_masuk_id'));
+        }
+
         $metrics = [
             'total' => SuratKeluar::count(),
             'draf' => SuratKeluar::where('status', 'Draf')->count(),
@@ -48,7 +53,7 @@ class SuratKeluarController extends Controller
             'terkirim' => SuratKeluar::where('status', 'Terkirim')->count(),
         ];
 
-        return view('dashboard.surat-keluar.index', compact('suratKeluar', 'metrics'));
+        return view('dashboard.surat-keluar.index', compact('suratKeluar', 'metrics', 'parentSuratMasuk'));
     }
 
     public function store(StoreSuratKeluarRequest $request): RedirectResponse
@@ -67,7 +72,7 @@ class SuratKeluarController extends Controller
     {
         Gate::authorize('view', $suratKeluar);
 
-        $suratKeluar->load(['creator', 'approver']);
+        $suratKeluar->load(['creator', 'approver', 'parentSuratMasuk']);
 
         return view('dashboard.surat-keluar.show', compact('suratKeluar'));
     }

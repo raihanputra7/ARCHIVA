@@ -55,6 +55,23 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Kolom Metadata Utama -->
             <div class="lg:col-span-2 space-y-6">
+                @if($suratKeluar->parentSuratMasuk)
+                    <div class="p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-xs">
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-2xl text-blue-600 dark:text-blue-400 mt-0.5">reply</span>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Naskah Balasan Terkait</p>
+                                <p class="text-sm font-bold mt-0.5">Surat Masuk: {{ $suratKeluar->parentSuratMasuk->nomor_agenda }}</p>
+                                <p class="text-xs text-blue-800 dark:text-blue-300 mt-0.5">{{ $suratKeluar->parentSuratMasuk->perihal }} (Pengirim: {{ $suratKeluar->parentSuratMasuk->pengirim }})</p>
+                            </div>
+                        </div>
+                        <a href="{{ route('surat-masuk.show', $suratKeluar->parentSuratMasuk) }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors whitespace-nowrap self-start sm:self-center shadow-xs">
+                            <span>Buka Surat Masuk</span>
+                            <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                        </a>
+                    </div>
+                @endif
+
                 <x-card class="p-6">
                     <h2 class="text-base font-bold text-slate-900 dark:text-white pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
                         Informasi Naskah Surat

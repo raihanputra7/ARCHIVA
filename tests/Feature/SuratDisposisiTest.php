@@ -284,12 +284,69 @@ class SuratDisposisiTest extends TestCase
         $this->assertEquals('Didisposisikan', $surat->status);
     }
 
-    public function test_guru_cannot_create_disposisi(): void
+    public function test_multi_assignee_disposisi_creation_and_audit_trail(): void
     {
         $surat = SuratMasuk::create([
             'nomor_agenda' => 'ARC/SM/TEST/0002',
             'pengirim' => 'Sudin Jakbar',
-            'perihal' => 'Uji Otorisasi Disposisi',
+            'perihal' => 'Pemeriksaan Kesehatan Anak Sekolah',
+            'tanggal_surat' => now(),
+            'tanggal_diterima' => now(),
+            'asal' => 'eksternal',
+            'kategori' => 'Dinas',
+            'sifat' => 'Biasa',
+            'status' => 'diterima',
+            'created_by' => $this->tu->id,
+            'dicatat_oleh' => $this->tu->id,
+        ]);
+
+        // Kepala sekolah mendisposisikan secara jamak (multi-assignee) ke Guru dan Tendik
+        $response = $this->actingAs($this->kepsek)->post(route('disposisi.store', $surat), [
+            'to_user_ids' => [$this->guru->id, $this->tendik->id],
+            'instruksi' => 'Koordinasikan jadwal pemeriksaan dengan guru kelas dan UKS.',
+            'sifat' => 'Segera',
+            'batas_waktu' => now()->addDays(2)->format('Y-m-d'),
+        ]);
+
+        $response->assertRedirect();
+
+        // Memastikan 2 record Disposisi dibuat untuk masing-masing penerima
+        $this->assertEquals(2, Disposisi::where('surat_masuk_id', $surat->id)->count());
+
+        $this->assertDatabaseHas('disposisi', [
+            'surat_masuk_id' => $surat->id,
+            'to_user_id' => $this->guru->id,
+            'instruksi' => 'Koordinasikan jadwal pemeriksaan dengan guru kelas dan UKS.',
+            'sifat' => 'Segera',
+            'status' => 'Menunggu',
+        ]);
+
+        $this->assertDatabaseHas('disposisi', [
+            'surat_masuk_id' => $surat->id,
+            'to_user_id' => $this->tendik->id,
+            'instruksi' => 'Koordinasikan jadwal pemeriksaan dengan guru kelas dan UKS.',
+            'sifat' => 'Segera',
+            'status' => 'Menunggu',
+        ]);
+
+        // Status surat berubah menjadi Didisposisikan
+        $surat->refresh();
+        $this->assertEquals('Didisposisikan', $surat->status);
+
+        // RiwayatStatus mencatat baris transisi disposisi
+        $this->assertDatabaseHas('riwayat_status', [
+            'surat_masuk_id' => $surat->id,
+            'ke_status' => StatusSurat::DIDISPOSISIKAN->value,
+            'user_id' => $this->kepsek->id,
+        ]);
+    }
+
+    public function test_tu_and_authorized_guru_can_create_disposisi_while_unauthorized_is_forbidden(): void
+    {
+        $surat = SuratMasuk::create([
+            'nomor_agenda' => 'ARC/SM/TEST/0002B',
+            'pengirim' => 'Sudin Jakbar',
+            'perihal' => 'Koordinasi Penilaian Semester',
             'tanggal_surat' => now(),
             'tanggal_diterima' => now(),
             'asal' => 'eksternal',
@@ -297,15 +354,32 @@ class SuratDisposisiTest extends TestCase
             'sifat' => 'Biasa',
             'status' => 'Diterima',
             'created_by' => $this->tu->id,
+            'dicatat_oleh' => $this->tu->id,
         ]);
 
-        $response = $this->actingAs($this->guru)->post(route('disposisi.store', $surat), [
-            'to_user_id' => $this->tendik->id,
-            'instruksi' => 'Instruksi tidak berwenang',
+        // 1. TU berwenang membuat disposisi
+        $responseTU = $this->actingAs($this->tu)->post(route('disposisi.store', $surat), [
+            'to_user_ids' => [$this->guru->id],
+            'instruksi' => 'Harap ditindaklanjuti untuk guru kelas.',
             'sifat' => 'Biasa',
         ]);
+        $responseTU->assertRedirect();
 
-        $response->assertForbidden();
+        // 2. Guru yang terdaftar di disposisi dapat meneruskan instruksi ke rekan Tendik
+        $responseGuru = $this->actingAs($this->guru)->post(route('disposisi.store', $surat), [
+            'to_user_ids' => [$this->tendik->id],
+            'instruksi' => 'Bantu rekapitulasi data nilai.',
+            'sifat' => 'Biasa',
+        ]);
+        $responseGuru->assertRedirect();
+
+        // 3. Tendik tidak memiliki wewenang membuat disposisi (403)
+        $responseTendik = $this->actingAs($this->tendik)->post(route('disposisi.store', $surat), [
+            'to_user_ids' => [$this->guru->id],
+            'instruksi' => 'Instruksi tidak sah dari tendik',
+            'sifat' => 'Biasa',
+        ]);
+        $responseTendik->assertForbidden();
     }
 
     public function test_assigned_user_can_update_tindak_lanjut_status(): void
@@ -426,5 +500,67 @@ class SuratDisposisiTest extends TestCase
         $this->assertEquals('Disetujui', $sk->status);
         $this->assertEquals($this->kepsek->id, $sk->approved_by);
         $this->assertNotNull($sk->approved_at);
+    }
+
+    public function test_surat_keluar_reply_linking_to_parent_surat_masuk(): void
+    {
+        // 1. Buat surat masuk
+        $sm = SuratMasuk::create([
+            'nomor_agenda' => 'ARC/SM/2026/0888',
+            'nomor_surat_asli' => '005/UND/KEL/XI/2026',
+            'nomor_surat' => '005/UND/KEL/XI/2026',
+            'pengirim' => 'Kelurahan Jatipulo',
+            'perihal' => 'Undangan Kerja Bakti Lingkungan Sekolah',
+            'tanggal_surat' => '2026-11-01',
+            'tanggal_diterima' => '2026-11-02',
+            'asal' => 'eksternal',
+            'kategori' => 'Undangan',
+            'sifat' => 'Biasa',
+            'status' => 'diterima',
+            'created_by' => $this->tu->id,
+            'dicatat_oleh' => $this->tu->id,
+        ]);
+
+        // 2. Akses index surat keluar dengan parameter parent_surat_masuk_id
+        $responseIndex = $this->actingAs($this->tu)->get(route('surat-keluar.index', [
+            'parent_surat_masuk_id' => $sm->id,
+        ]));
+        $responseIndex->assertOk();
+        $responseIndex->assertSee('Balasan untuk Surat Masuk: ARC/SM/2026/0888');
+
+        // 3. Simpan surat keluar yang mereferensikan parent_surat_masuk_id
+        $responseStore = $this->actingAs($this->tu)->post(route('surat-keluar.store'), [
+            'parent_surat_masuk_id' => $sm->id,
+            'nomor_surat' => '421.2/100/SDN07/2026',
+            'tujuan' => 'Kelurahan Jatipulo',
+            'perihal' => 'Tanggapan atas: Undangan Kerja Bakti Lingkungan Sekolah',
+            'tanggal_surat' => '2026-11-03',
+            'kategori' => 'Dinas',
+            'sifat' => 'Biasa',
+            'ringkasan' => 'Konfirmasi partisipasi kerja bakti.',
+        ]);
+
+        $sk = SuratKeluar::where('nomor_surat', '421.2/100/SDN07/2026')->first();
+        $this->assertNotNull($sk);
+        $this->assertEquals($sm->id, $sk->parent_surat_masuk_id);
+        $responseStore->assertRedirect(route('surat-keluar.show', $sk));
+
+        // 4. Verifikasi relasi Eloquent 2 arah
+        $this->assertEquals($sm->id, $sk->parentSuratMasuk->id);
+        $this->assertTrue($sm->suratKeluar->contains($sk));
+        $this->assertTrue($sm->suratBalasan->contains($sk));
+
+        // 5. Verifikasi tampilan show surat keluar menampilkan rujukan ke surat masuk
+        $responseShowSK = $this->actingAs($this->tu)->get(route('surat-keluar.show', $sk));
+        $responseShowSK->assertOk();
+        $responseShowSK->assertSee('Naskah Balasan Terkait');
+        $responseShowSK->assertSee('ARC/SM/2026/0888');
+
+        // 6. Verifikasi tampilan show surat masuk menampilkan rujukan ke surat keluar balasan
+        $responseShowSM = $this->actingAs($this->tu)->get(route('surat-masuk.show', $sm));
+        $responseShowSM->assertOk();
+        $responseShowSM->assertSee('Surat Balasan Terkait');
+        $responseShowSM->assertSee($sk->nomor_agenda);
+        $responseShowSM->assertSee('Tanggapan atas: Undangan Kerja Bakti Lingkungan Sekolah');
     }
 }

@@ -1,5 +1,5 @@
 <x-app-layout active="surat-keluar">
-    <div class="space-y-6" x-data="{ openCreateModal: false }">
+    <div class="space-y-6" x-data="{ openCreateModal: {{ !empty($parentSuratMasuk) ? 'true' : 'false' }} }">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -119,6 +119,14 @@
                                 </td>
                                 <td class="py-3 px-4 text-slate-700 dark:text-slate-300 max-w-[260px]">
                                     <div class="line-clamp-2">{{ $item->perihal }}</div>
+                                    @if($item->parentSuratMasuk)
+                                        <div class="mt-1">
+                                            <a href="{{ route('surat-masuk.show', $item->parentSuratMasuk) }}" class="inline-flex items-center gap-1 text-[10px] font-semibold text-primary-navy dark:text-primary-gold hover:underline bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded" title="Lihat Surat Masuk Asal">
+                                                <span class="material-symbols-outlined text-[12px]">reply</span>
+                                                <span>Balasan: {{ $item->parentSuratMasuk->nomor_agenda }}</span>
+                                            </a>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="py-3 px-4 text-slate-600 dark:text-slate-400 text-xs whitespace-nowrap">
                                     {{ $item->tanggal_surat->isoFormat('D MMM Y') }}
@@ -190,6 +198,17 @@
 
                     <form action="{{ route('surat-keluar.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
+                        @if(!empty($parentSuratMasuk))
+                            <input type="hidden" name="parent_surat_masuk_id" value="{{ $parentSuratMasuk->id }}">
+                            <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200 text-xs flex items-start gap-2.5">
+                                <span class="material-symbols-outlined text-[18px] text-blue-600 dark:text-blue-400 mt-0.5">reply</span>
+                                <div>
+                                    <p class="font-bold">Balasan untuk Surat Masuk: {{ $parentSuratMasuk->nomor_agenda }}</p>
+                                    <p class="text-[11px] text-blue-700 dark:text-blue-300 mt-0.5">{{ $parentSuratMasuk->perihal }} (Pengirim: {{ $parentSuratMasuk->pengirim }})</p>
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor Surat Resmi (Opsional)</label>
@@ -203,12 +222,12 @@
 
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Pihak / Instansi Tujuan <span class="text-red-500">*</span></label>
-                            <input type="text" name="tujuan" required placeholder="Misal: Suku Dinas Pendidikan Wilayah II Jakarta Barat" class="w-full px-3.5 py-2 rounded-xl text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-navy dark:focus:ring-primary-gold">
+                            <input type="text" name="tujuan" value="{{ old('tujuan', $parentSuratMasuk?->pengirim) }}" required placeholder="Misal: Suku Dinas Pendidikan Wilayah II Jakarta Barat" class="w-full px-3.5 py-2 rounded-xl text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-navy dark:focus:ring-primary-gold">
                         </div>
 
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Perihal Surat <span class="text-red-500">*</span></label>
-                            <textarea name="perihal" rows="2" required placeholder="Tuliskan subjek atau perihal naskah surat dinas..." class="w-full px-3.5 py-2 rounded-xl text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-navy dark:focus:ring-primary-gold"></textarea>
+                            <textarea name="perihal" rows="2" required placeholder="Tuliskan subjek atau perihal naskah surat dinas..." class="w-full px-3.5 py-2 rounded-xl text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-navy dark:focus:ring-primary-gold">{{ old('perihal', !empty($parentSuratMasuk) ? 'Tanggapan atas: ' . $parentSuratMasuk->perihal : '') }}</textarea>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

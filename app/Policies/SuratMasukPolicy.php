@@ -81,7 +81,15 @@ class SuratMasukPolicy
 
     public function createDisposisi(User $user, SuratMasuk $suratMasuk): bool
     {
-        // Hanya Kepala Sekolah yang berwenang memberikan instruksi disposisi
-        return $user->hasRole(Role::KEPALA_SEKOLAH);
+        // Pimpinan (Kepsek), TU, dan Guru berwenang membuat/meneruskan instruksi disposisi
+        if (! $this->view($user, $suratMasuk)) {
+            return false;
+        }
+
+        return $user->hasRole(
+            Role::KEPALA_SEKOLAH,
+            Role::TATA_USAHA,
+            Role::GURU
+        );
     }
 }

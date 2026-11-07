@@ -15,6 +15,7 @@ class StoreSuratKeluarRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'parent_surat_masuk_id' => ['nullable', 'integer', 'exists:surat_masuk,id'],
             'nomor_surat' => ['nullable', 'string', 'max:100'],
             'tujuan' => ['required', 'string', 'max:255'],
             'perihal' => ['required', 'string', 'max:500'],

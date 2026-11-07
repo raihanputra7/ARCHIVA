@@ -20,12 +20,16 @@ class SuratKeluarPolicy
 
     public function create(User $user): bool
     {
-        return $user->hasRole(Role::ADMIN, Role::TATA_USAHA);
+        return $user->hasRole(Role::ADMIN, Role::KEPALA_SEKOLAH, Role::TATA_USAHA, Role::GURU);
     }
 
     public function update(User $user, SuratKeluar $suratKeluar): bool
     {
-        return $user->hasRole(Role::ADMIN, Role::TATA_USAHA);
+        if ($user->hasRole(Role::ADMIN, Role::TATA_USAHA)) {
+            return true;
+        }
+
+        return $suratKeluar->created_by === $user->id && $suratKeluar->status === 'Draf';
     }
 
     public function delete(User $user, SuratKeluar $suratKeluar): bool

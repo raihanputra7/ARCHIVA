@@ -451,7 +451,7 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- MODAL: BUAT LEMBAR DISPOSISI PIMPINAN (KEPALA SEKOLAH)             -->
+        <!-- MODAL: BUAT LEMBAR DISPOSISI (MULTI-ASSIGNEE)                      -->
         <!-- ================================================================= -->
         <div
             x-show="disposisiModal"
@@ -463,9 +463,18 @@
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
             style="display: none;"
+            x-data="{
+                selectedRecipients: [],
+                selectAll() {
+                    this.selectedRecipients = [{{ $assignableUsers->pluck('id')->join(',') }}];
+                },
+                clearAll() {
+                    this.selectedRecipients = [];
+                }
+            }"
         >
             <div
-                class="bg-surface-lowest border border-border-subtle rounded-3xl shadow-xl max-w-lg w-full"
+                class="bg-surface-lowest border border-border-subtle rounded-3xl shadow-xl max-w-lg w-full overflow-hidden"
                 @click.away="disposisiModal = false"
                 @keydown.escape.window="disposisiModal = false"
             >
@@ -487,22 +496,42 @@
                     @csrf
 
                     <div>
-                        <label for="to_user_id" class="block text-sm font-semibold text-on-surface mb-1.5">
-                            Tujuan Disposisi (Penerima Tugas) <span class="text-error">*</span>
-                        </label>
-                        <select
-                            id="to_user_id"
-                            name="to_user_id"
-                            class="w-full h-11 px-3.5 rounded-lg text-sm bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
-                            required
-                        >
-                            <option value="">-- Pilih Rekan / Staf --</option>
-                            @foreach($assignableUsers as $u)
-                                <option value="{{ $u->id }}">
-                                    {{ $u->name }} ({{ strtoupper(str_replace('_', ' ', $u->role->value ?? $u->role)) }}{{ $u->unit ? ' - ' . $u->unit : '' }})
-                                </option>
-                            @endforeach
-                        </select>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-sm font-semibold text-on-surface">
+                                Pilih Penerima Disposisi <span class="text-error">*</span>
+                            </label>
+                            <div class="flex items-center gap-2 text-xs">
+                                <button type="button" @click="selectAll()" class="text-primary hover:underline font-semibold">Pilih Semua</button>
+                                <span class="text-outline">•</span>
+                                <button type="button" @click="clearAll()" class="text-outline hover:text-on-surface">Hapus Pilihan</button>
+                            </div>
+                        </div>
+
+                        <div class="max-h-48 overflow-y-auto border border-outline-variant rounded-xl p-2.5 space-y-1.5 bg-surface-lowest">
+                            @forelse($assignableUsers as $u)
+                                <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container transition-colors cursor-pointer text-xs">
+                                    <input
+                                        type="checkbox"
+                                        name="to_user_ids[]"
+                                        value="{{ $u->id }}"
+                                        x-model="selectedRecipients"
+                                        class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                                    >
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-bold text-on-surface truncate">{{ $u->name }}</p>
+                                        <p class="text-[11px] text-outline truncate">
+                                            {{ strtoupper(str_replace('_', ' ', $u->role->value ?? $u->role)) }}{{ $u->unit ? ' - ' . $u->unit : '' }}
+                                        </p>
+                                    </div>
+                                </label>
+                            @empty
+                                <p class="text-xs text-outline py-2 text-center">Tidak ada calon penerima tersedia.</p>
+                            @endforelse
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] text-outline mt-1 px-1">
+                            <span>Bisa memilih lebih dari satu staf sekaligus.</span>
+                            <span class="font-semibold text-primary" x-text="selectedRecipients.length + ' dipilih'"></span>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -549,10 +578,13 @@
                         <x-button type="button" variant="ghost" @click="disposisiModal = false">
                             Batal
                         </x-button>
-                        <x-button type="submit" variant="accent">
+                        <x-button type="submit" variant="accent" ::disabled="selectedRecipients.length === 0">
                             Kirim Disposisi
                         </x-button>
                     </div>
+                </form>
+            </div>
+        </div>
                 </form>
             </div>
         </div>

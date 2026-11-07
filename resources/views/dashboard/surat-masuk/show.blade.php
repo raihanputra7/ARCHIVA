@@ -32,6 +32,18 @@
                     <span>Cetak Lembar Disposisi</span>
                 </a>
 
+                @can('create', \App\Models\SuratKeluar::class)
+                    <a
+                        href="{{ route('surat-keluar.index', ['parent_surat_masuk_id' => $suratMasuk->id]) }}"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-primary text-on-primary hover:bg-primary-strong transition-all shadow-sm"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                        </svg>
+                        <span>Buat Surat Balasan</span>
+                    </a>
+                @endcan
+
                 @can('createDisposisi', $suratMasuk)
                     <button
                         type="button"
@@ -187,7 +199,7 @@
                 </x-card>
             </div>
 
-            <!-- Kolom Kanan: Berkas Lampiran & Ringkasan -->
+            <!-- Kolom Kanan: Berkas Lampiran & Surat Balasan -->
             <div class="space-y-6">
                 <x-card title="Berkas Naskah Dinas" subtitle="Dokumen fisik yang dipindai ke storage privat">
                     @if($suratMasuk->file_path)
@@ -220,26 +232,75 @@
                         </div>
                     @endif
                 </x-card>
+
+                <!-- Surat Balasan / Surat Keluar Terkait -->
+                <x-card title="Surat Balasan Terkait" subtitle="Naskah dinas resmi sekolah yang diterbitkan sebagai balasan surat ini">
+                    @if($suratMasuk->suratKeluar->isEmpty())
+                        <div class="py-6 text-center text-on-surface-variant text-xs space-y-2">
+                            <p class="italic">Belum ada surat keluar yang diterbitkan sebagai balasan.</p>
+                            @can('create', \App\Models\SuratKeluar::class)
+                                <a
+                                    href="{{ route('surat-keluar.index', ['parent_surat_masuk_id' => $suratMasuk->id]) }}"
+                                    class="inline-flex items-center gap-1 text-primary hover:underline font-semibold text-xs"
+                                >
+                                    + Buat Surat Balasan Resmi
+                                </a>
+                            @endcan
+                        </div>
+                    @else
+                        <div class="space-y-3">
+                            @foreach($suratMasuk->suratKeluar as $sk)
+                                <a
+                                    href="{{ route('surat-keluar.show', $sk) }}"
+                                    class="block p-3 rounded-xl border border-border-subtle bg-surface-lowest hover:bg-surface-container-low transition-colors group"
+                                >
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="font-mono font-bold text-xs text-primary group-hover:underline">
+                                            {{ $sk->nomor_agenda }}
+                                        </span>
+                                        <x-badge-status :status="$sk->status" />
+                                    </div>
+                                    <p class="font-semibold text-xs text-on-surface mt-1 line-clamp-1">
+                                        {{ $sk->perihal }}
+                                    </p>
+                                    <div class="flex items-center justify-between text-[11px] text-outline mt-2 pt-2 border-t border-border-subtle/50">
+                                        <span class="truncate max-w-[140px]">Tujuan: <strong>{{ $sk->tujuan }}</strong></span>
+                                        <span class="tabular-nums whitespace-nowrap">{{ $sk->tanggal_surat->isoFormat('D MMM Y') }}</span>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                </x-card>
             </div>
 
         </div>
 
-        <!-- Modal Tambah Disposisi -->
+        <!-- Modal Tambah Disposisi Multi-Assignee -->
         @can('createDisposisi', $suratMasuk)
             <div
                 x-show="dispModal"
                 class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-dark/60 backdrop-blur-xs"
                 x-transition
                 style="display: none;"
+                x-data="{
+                    selectedRecipients: [],
+                    selectAll() {
+                        this.selectedRecipients = [{{ $assignableUsers->pluck('id')->join(',') }}];
+                    },
+                    clearAll() {
+                        this.selectedRecipients = [];
+                    }
+                }"
             >
                 <div
-                    class="bg-surface-lowest border border-border-subtle rounded-3xl shadow-xl max-w-lg w-full"
+                    class="bg-surface-lowest border border-border-subtle rounded-3xl shadow-xl max-w-lg w-full overflow-hidden"
                     @click.away="dispModal = false"
                 >
                     <div class="p-6 border-b border-border-subtle flex items-center justify-between">
                         <div>
                             <h3 class="text-lg font-bold text-on-surface">Buat Instruksi Disposisi</h3>
-                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $suratMasuk->nomor_agenda }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $suratMasuk->nomor_agenda }} — {{ $suratMasuk->perihal }}</p>
                         </div>
                         <button type="button" @click="dispModal = false" class="p-1.5 rounded-lg text-outline hover:text-on-surface">✕</button>
                     </div>
@@ -247,22 +308,42 @@
                     <form method="POST" action="{{ route('disposisi.store', $suratMasuk) }}" class="p-6 space-y-4">
                         @csrf
                         <div>
-                            <label for="to_user_id_show" class="block text-sm font-semibold text-on-surface mb-1.5">
-                                Tujuan Disposisi <span class="text-error">*</span>
-                            </label>
-                            <select
-                                id="to_user_id_show"
-                                name="to_user_id"
-                                class="w-full h-11 px-3.5 rounded-lg text-sm bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
-                                required
-                            >
-                                <option value="">-- Pilih Rekan / Staf --</option>
-                                @foreach($assignableUsers as $u)
-                                    <option value="{{ $u->id }}">
-                                        {{ $u->name }} ({{ strtoupper(str_replace('_', ' ', $u->role->value ?? $u->role)) }}{{ $u->unit ? ' - ' . $u->unit : '' }})
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="block text-sm font-semibold text-on-surface">
+                                    Pilih Penerima Disposisi <span class="text-error">*</span>
+                                </label>
+                                <div class="flex items-center gap-2 text-xs">
+                                    <button type="button" @click="selectAll()" class="text-primary hover:underline font-semibold">Pilih Semua</button>
+                                    <span class="text-outline">•</span>
+                                    <button type="button" @click="clearAll()" class="text-outline hover:text-on-surface">Hapus Pilihan</button>
+                                </div>
+                            </div>
+
+                            <div class="max-h-48 overflow-y-auto border border-outline-variant rounded-xl p-2.5 space-y-1.5 bg-surface-lowest">
+                                @forelse($assignableUsers as $u)
+                                    <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container transition-colors cursor-pointer text-xs">
+                                        <input
+                                            type="checkbox"
+                                            name="to_user_ids[]"
+                                            value="{{ $u->id }}"
+                                            x-model="selectedRecipients"
+                                            class="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                                        >
+                                        <div class="flex-1 min-w-0">
+                                            <p class="font-bold text-on-surface truncate">{{ $u->name }}</p>
+                                            <p class="text-[11px] text-outline truncate">
+                                                {{ strtoupper(str_replace('_', ' ', $u->role->value ?? $u->role)) }}{{ $u->unit ? ' - ' . $u->unit : '' }}
+                                            </p>
+                                        </div>
+                                    </label>
+                                @empty
+                                    <p class="text-xs text-outline py-2 text-center">Tidak ada calon penerima tersedia.</p>
+                                @endforelse
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] text-outline mt-1 px-1">
+                                <span>Bisa memilih lebih dari satu penerima sekaligus.</span>
+                                <span class="font-semibold text-primary" x-text="selectedRecipients.length + ' dipilih'"></span>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
@@ -288,7 +369,7 @@
 
                         <div class="pt-4 border-t border-border-subtle flex items-center justify-end gap-3">
                             <x-button type="button" variant="ghost" @click="dispModal = false">Batal</x-button>
-                            <x-button type="submit" variant="accent">Teruskan Disposisi</x-button>
+                            <x-button type="submit" variant="accent" ::disabled="selectedRecipients.length === 0">Teruskan Disposisi</x-button>
                         </div>
                     </form>
                 </div>
