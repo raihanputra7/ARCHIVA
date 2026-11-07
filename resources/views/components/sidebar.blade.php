@@ -125,48 +125,43 @@
     <div class="flex-1 overflow-y-auto overflow-x-hidden">
         <!-- Logo & Header Area -->
         <div class="h-16 px-3 border-b border-border-subtle flex items-center justify-between overflow-hidden">
-            <!-- Mode Expanded: Logo + teks "ARCHIVA SDN 07" + tombol toggle di sebelah kanan -->
+            <!-- Mode Expanded: Logo interaktif sebagai tombol toggle + tombol tutup mobile -->
             <div x-show="sidebarExpanded" class="flex items-center justify-between w-full min-w-0">
-                <a href="{{ route('dashboard') }}" class="flex items-center min-w-0 focus:outline-none" title="ARCHIVA SDN 07">
+                <button
+                    type="button"
+                    @click="sidebarExpanded = !sidebarExpanded"
+                    class="flex items-center gap-2.5 p-1.5 -ml-1 rounded-xl border border-transparent hover:border-border-subtle hover:bg-surface-container/60 transition-all cursor-pointer focus:outline-none text-left min-w-0 group"
+                    title="Ciutkan Sidebar"
+                    aria-label="Ciutkan Sidebar"
+                >
                     <x-logo size="sm" :subtext="null" />
-                </a>
-                <div class="flex items-center gap-1 flex-shrink-0">
-                    <button
-                        type="button"
-                        @click="sidebarExpanded = false"
-                        class="hidden lg:inline-flex p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors focus:outline-none"
-                        title="Ciutkan Sidebar"
-                        aria-label="Ciutkan Sidebar"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
-                        </svg>
-                    </button>
-                    <button
-                        type="button"
-                        @click="mobileSidebarOpen = false"
-                        class="lg:hidden p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container focus:outline-none"
-                        aria-label="Tutup Menu"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
+                </button>
+
+                <!-- Tombol Tutup Drawer Mobile (Hanya di layar ponsel < lg) -->
+                <button
+                    type="button"
+                    @click="mobileSidebarOpen = false"
+                    class="lg:hidden p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container focus:outline-none flex-shrink-0"
+                    aria-label="Tutup Menu"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
 
-            <!-- Mode Collapsed: Tampilkan Logo kecil di tengah (klik untuk expand) -->
+            <!-- Mode Collapsed: Logo kecil di tengah (klik untuk perluas) -->
             <div x-show="!sidebarExpanded" x-cloak class="hidden lg:flex items-center justify-center w-full">
                 <button
                     type="button"
-                    @click="sidebarExpanded = true"
-                    class="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container transition-colors focus:outline-none"
+                    @click="sidebarExpanded = !sidebarExpanded"
+                    class="p-2 rounded-xl border border-transparent hover:border-border-subtle hover:bg-surface-container transition-all cursor-pointer focus:outline-none"
                     title="Perluas Sidebar"
                     aria-label="Perluas Sidebar"
                 >
                     <img
                         src="{{ asset('images/logo-sdn-jatipulo07.png') }}"
-                        alt="SDN 07"
+                        alt="Logo SDN Jatipulo 07"
                         class="h-8 w-auto object-contain flex-shrink-0"
                     >
                 </button>
