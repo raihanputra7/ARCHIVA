@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/plus-jakarta-sans';
 
+[x-cloak] {
+  display: none !important;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Nilai mode terang */

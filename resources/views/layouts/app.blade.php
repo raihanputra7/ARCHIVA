@@ -24,10 +24,10 @@
             <!-- Sidebar Navigation -->
             <x-sidebar :active="$active ?? null" />
 
-            <!-- Main Shell (Offset menyesuaikan status collapse sidebar) -->
+            <!-- Main Shell (Offset menyesuaikan status collapse sidebar: w-64 vs w-20) -->
             <div
-                :class="$store.sidebar.collapsed ? 'lg:pl-[76px]' : 'lg:pl-[264px]'"
-                class="flex flex-col min-h-screen transition-all duration-300 ease-in-out"
+                :class="$store.sidebar.collapsed ? 'lg:pl-20' : 'lg:pl-64'"
+                class="flex flex-col min-h-screen transition-all duration-200 ease-in-out"
             >
                 <!-- Topbar -->
                 <x-topbar />

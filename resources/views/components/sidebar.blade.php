@@ -116,47 +116,56 @@
 <aside
     :class="[
         $store.sidebar.open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-        $store.sidebar.collapsed ? 'lg:w-[76px]' : 'lg:w-[264px]'
+        $store.sidebar.collapsed ? 'lg:w-20' : 'lg:w-64'
     ]"
-    class="fixed inset-y-0 left-0 z-50 w-[264px] bg-surface-lowest border-r border-border-subtle flex flex-col justify-between transition-all duration-300 ease-in-out select-none"
+    class="fixed inset-y-0 left-0 z-50 w-64 bg-surface-lowest border-r border-border-subtle flex flex-col justify-between transition-all duration-200 ease-in-out select-none"
 >
     <!-- Top: Logo & Nav -->
     <div class="flex-1 overflow-y-auto overflow-x-hidden">
-        <!-- Logo Area -->
+        <!-- Logo & Header Area -->
         <div class="h-16 px-4 border-b border-border-subtle flex items-center justify-between overflow-hidden">
-            <!-- Mode Normal (Expanded) -->
-            <div x-show="!$store.sidebar.collapsed" class="flex items-center gap-2">
+            <!-- Mode Expanded: Logo & Teks Sekolah (Hanya muncul saat expanded) -->
+            <div x-show="!$store.sidebar.collapsed" x-cloak class="flex items-center min-w-0 pr-2">
                 <x-logo size="md" />
             </div>
 
-            <!-- Mode Collapsed (Desktop Mini) -->
-            <div x-show="$store.sidebar.collapsed" class="hidden lg:flex items-center justify-center w-full" title="ARCHIVA — SDN Jatipulo 07">
-                <img
-                    src="{{ asset('images/logo-sdn-jatipulo07.png') }}"
-                    alt="Logo SDN Jatipulo 07"
-                    class="h-9 w-auto object-contain flex-shrink-0"
-                    loading="eager"
+            <!-- Mode Collapsed: Tampilkan Cukup 1 Logo Utama di tengah (Hanya muncul saat collapsed) -->
+            <div x-show="$store.sidebar.collapsed" x-cloak class="hidden lg:flex items-center justify-center w-full">
+                <button
+                    type="button"
+                    @click="$store.sidebar.toggleCollapse()"
+                    class="p-1 rounded-xl hover:bg-surface-container transition-colors focus:outline-none"
+                    title="Perluas Sidebar"
+                    aria-label="Perluas Sidebar"
                 >
+                    <img
+                        src="{{ asset('images/logo-sdn-jatipulo07.png') }}"
+                        alt="Logo SDN Jatipulo 07"
+                        class="h-8 w-auto object-contain flex-shrink-0"
+                    >
+                </button>
             </div>
 
-            <!-- Tombol Collapse Desktop di Sidebar Header -->
+            <!-- Tombol Collapse (<<) di pojok kanan atas saat Expanded (Desktop) -->
             <button
                 type="button"
+                x-show="!$store.sidebar.collapsed"
+                x-cloak
                 @click="$store.sidebar.toggleCollapse()"
-                class="hidden lg:inline-flex p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
-                :title="$store.sidebar.collapsed ? 'Perluas Sidebar' : 'Ciutkan Sidebar'"
-                aria-label="Toggle Sidebar"
+                class="hidden lg:inline-flex ml-auto flex-shrink-0 p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors focus:outline-none"
+                title="Ciutkan Sidebar"
+                aria-label="Ciutkan Sidebar"
             >
-                <svg class="w-4 h-4 transition-transform duration-200" :class="$store.sidebar.collapsed ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
                 </svg>
             </button>
 
-            <!-- Tombol Close Drawer Mobile -->
+            <!-- Tombol Tutup Drawer Mobile -->
             <button
                 type="button"
                 @click="$store.sidebar.closeMobile()"
-                class="lg:hidden p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container"
+                class="lg:hidden ml-auto flex-shrink-0 p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container focus:outline-none"
                 aria-label="Tutup Menu"
             >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,10 +178,10 @@
         <nav class="p-3 space-y-5">
             @foreach($navSections as $section)
                 <div>
-                    <h4 x-show="!$store.sidebar.collapsed" class="px-3 text-[11px] font-bold uppercase tracking-wider text-outline mb-2 transition-opacity duration-200">
+                    <h4 x-show="!$store.sidebar.collapsed" x-cloak class="px-3 text-[11px] font-bold uppercase tracking-wider text-outline mb-2 transition-opacity duration-200">
                         {{ $section['title'] }}
                     </h4>
-                    <div x-show="$store.sidebar.collapsed" class="my-2 border-t border-border-subtle/60"></div>
+                    <div x-show="$store.sidebar.collapsed" x-cloak class="my-2 border-t border-border-subtle/60"></div>
 
                     <div class="space-y-1">
                         @foreach($section['items'] as $item)
@@ -220,9 +229,9 @@
                                         <svg class="w-4 h-4 text-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             {!! $iconSvg !!}
                                         </svg>
-                                        <span x-show="!$store.sidebar.collapsed" class="truncate">{{ $item['label'] }}</span>
+                                        <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">{{ $item['label'] }}</span>
                                     </div>
-                                    <span x-show="!$store.sidebar.collapsed" class="text-[10px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant font-normal">Nanti</span>
+                                    <span x-show="!$store.sidebar.collapsed" x-cloak class="text-[10px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant font-normal">Nanti</span>
                                 </div>
                             @else
                                 <a
@@ -240,7 +249,7 @@
                                         <svg class="w-4 h-4 flex-shrink-0 {{ $isItemActive ? 'text-primary' : 'text-outline group-hover:text-on-surface' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             {!! $iconSvg !!}
                                         </svg>
-                                        <span x-show="!$store.sidebar.collapsed" class="truncate">{{ $item['label'] }}</span>
+                                        <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">{{ $item['label'] }}</span>
                                     </div>
                                 </a>
                             @endif
@@ -253,8 +262,8 @@
 
     <!-- Bottom: User Meta & Quick Logout -->
     <div class="p-3 border-t border-border-subtle bg-surface-container-low/50 overflow-hidden">
-        <!-- Expanded User Meta -->
-        <div x-show="!$store.sidebar.collapsed" class="flex items-center justify-between gap-2.5">
+        <!-- Versi Lengkap (Expanded): Baris horizontal rapi Avatar + Nama + Role + Tombol Logout -->
+        <div x-show="!$store.sidebar.collapsed" x-cloak class="flex items-center justify-between gap-2.5">
             <div class="flex items-center gap-2.5 min-w-0">
                 <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-xs">
                     {{ strtoupper(substr($user?->name ?? 'U', 0, 1)) }}
@@ -265,7 +274,7 @@
                 </div>
             </div>
             
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}" class="flex-shrink-0">
                 @csrf
                 <button
                     type="submit"
@@ -280,8 +289,8 @@
             </form>
         </div>
 
-        <!-- Collapsed Mini User Meta -->
-        <div x-show="$store.sidebar.collapsed" class="hidden lg:flex flex-col items-center justify-center gap-2 py-1">
+        <!-- Versi Mini/Collapsed (Desktop Saja): 1 Avatar di tengah dengan tombol logout di bawahnya -->
+        <div x-show="$store.sidebar.collapsed" x-cloak class="hidden lg:flex flex-col items-center justify-center gap-2 py-1">
             <div
                 class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs shadow-xs"
                 title="{{ $user?->name }} ({{ str_replace('_', ' ', $role) }})"
