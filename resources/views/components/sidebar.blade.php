@@ -124,24 +124,24 @@
     <!-- Top: Logo & Nav -->
     <div class="flex-1 overflow-y-auto overflow-x-hidden">
         <!-- Logo & Header Area -->
-        <div class="h-16 px-3 border-b border-border-subtle flex items-center justify-between overflow-hidden">
-            <!-- Mode Expanded: Logo interaktif sebagai tombol toggle + tombol tutup mobile -->
+        <div class="min-h-16 py-2 px-2.5 border-b border-border-subtle flex items-center justify-between overflow-hidden">
+            <!-- Mode Expanded: Logo di panel putih di kiri, teks identitas di kanan, hover halus menyatu -->
             <div x-show="sidebarExpanded" class="flex items-center justify-between w-full min-w-0">
                 <button
                     type="button"
                     @click="sidebarExpanded = !sidebarExpanded"
-                    class="flex items-center gap-2.5 p-1.5 -ml-1 rounded-xl border border-transparent hover:border-border-subtle hover:bg-surface-container/60 transition-all cursor-pointer focus:outline-none text-left min-w-0 group"
+                    class="flex items-center gap-2.5 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl p-2 transition-colors cursor-pointer focus:outline-none text-left w-full min-w-0 group"
                     title="Ciutkan Sidebar"
                     aria-label="Ciutkan Sidebar"
                 >
-                    <x-logo size="sm" :subtext="null" />
+                    <x-logo size="sm" />
                 </button>
 
                 <!-- Tombol Tutup Drawer Mobile (Hanya di layar ponsel < lg) -->
                 <button
                     type="button"
                     @click="mobileSidebarOpen = false"
-                    class="lg:hidden p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container focus:outline-none flex-shrink-0"
+                    class="lg:hidden p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container focus:outline-none flex-shrink-0 ml-1"
                     aria-label="Tutup Menu"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -150,20 +150,22 @@
                 </button>
             </div>
 
-            <!-- Mode Collapsed: Logo kecil di tengah (klik untuk perluas) -->
+            <!-- Mode Collapsed: Hanya logo dalam panel putih kecil di tengah -->
             <div x-show="!sidebarExpanded" x-cloak class="hidden lg:flex items-center justify-center w-full">
                 <button
                     type="button"
                     @click="sidebarExpanded = !sidebarExpanded"
-                    class="p-2 rounded-xl border border-transparent hover:border-border-subtle hover:bg-surface-container transition-all cursor-pointer focus:outline-none"
+                    class="hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl p-2 transition-colors cursor-pointer focus:outline-none"
                     title="Perluas Sidebar"
                     aria-label="Perluas Sidebar"
                 >
-                    <img
-                        src="{{ asset('images/logo-sdn-jatipulo07.png') }}"
-                        alt="Logo SDN Jatipulo 07"
-                        class="h-8 w-auto object-contain flex-shrink-0"
-                    >
+                    <div class="flex-shrink-0 flex items-center justify-center bg-white rounded-lg p-1.5 shadow-xs border border-slate-200/60 dark:border-white/10">
+                        <img
+                            src="{{ asset('images/logo-sdn-jatipulo07.png') }}"
+                            alt="Logo SDN Jatipulo 07"
+                            class="h-7 w-auto object-contain flex-shrink-0"
+                        >
+                    </div>
                 </button>
             </div>
         </div>

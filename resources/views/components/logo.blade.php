@@ -1,36 +1,31 @@
 @props([
     'variant' => 'default', // 'default' | 'on-dark'
-    'size' => 'md',        // 'sm' (32px), 'md' (40px), 'lg' (48px)
+    'size' => 'md',        // 'sm' (28px), 'md' (36px), 'lg' (44px)
     'showText' => true,
     'subtext' => 'Portal Persuratan SDN Jatipulo 07',
 ])
 
 @php
     $imgHeightClass = match($size) {
-        'sm' => 'h-8',
-        'lg' => 'h-12',
-        default => 'h-10',
+        'sm' => 'h-7',
+        'lg' => 'h-11',
+        default => 'h-9',
     };
 
     $isOnDark = $variant === 'on-dark';
 @endphp
 
 {{-- 
-    DESIGN_SYSTEM.md Bagian 1: Aturan Logo (prioritas tertinggi)
-    1. Latar logo selalu terang (#FFFFFF).
-    2. Bila area sekitar gelap (mode gelap, panel kiri login, footer navy), WAJIB memakai panel putih rounded-xl p-2.
-    3. Ruang bebas minimal 0.5x tinggi logo di keempat sisi.
-    4. Ukuran minimum 32px (sm), default 40px (md).
-    5. Aspect ratio dijaga (object-contain, w-auto), tidak di-stretch atau crop.
-    6. Logo resmi SDN Jatipulo 07: public/images/logo-sdn-jatipulo07.png.
+    DESIGN_SYSTEM.md Bagian 1: Aturan Logo
+    - Kontainer putih (bg-white rounded-lg p-1.5) HANYA membungkus aset gambar logo sekolah,
+      agar lambang tetap kontras di latar gelap tanpa membungkus elemen teks.
+    - Elemen teks berada langsung di atas permukaan latar dengan warna yang adaptif di mode terang & gelap.
 --}}
 <div {{ $attributes->merge([
-    'class' => 'inline-flex items-center gap-3 select-none transition-colors ' . 
-        ($isOnDark 
-            ? 'bg-[#FFFFFF] text-[#0F1B2D] rounded-xl p-2 shadow-sm' 
-            : 'dark:bg-[#FFFFFF] dark:text-[#0F1B2D] dark:rounded-xl dark:p-2 dark:shadow-sm')
+    'class' => 'inline-flex items-center gap-2.5 select-none min-w-0'
 ]) }}>
-    <div class="flex-shrink-0 flex items-center justify-center">
+    {{-- Panel putih khusus untuk logo agar selalu terang dan kontras --}}
+    <div class="flex-shrink-0 flex items-center justify-center bg-white rounded-lg p-1.5 shadow-xs border border-slate-200/60 dark:border-white/10">
         <img
             src="{{ asset('images/logo-sdn-jatipulo07.png') }}"
             alt="Logo SDN Jatipulo 07"
@@ -40,13 +35,13 @@
     </div>
 
     @if($showText)
-        <div class="flex flex-col text-left leading-tight">
+        <div class="flex flex-col text-left leading-tight min-w-0 flex-1">
             <div class="flex items-center gap-1.5">
-                <span class="font-extrabold tracking-tight text-base {{ $isOnDark ? 'text-[#0F2347]' : 'text-on-surface dark:text-[#0F2347]' }}">ARCHIVA</span>
-                <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#FBF1D3] text-[#5C4710]">SDN 07</span>
+                <span class="font-bold tracking-tight text-base {{ $isOnDark ? 'text-white' : 'text-slate-900 dark:text-white' }}">ARCHIVA</span>
+                <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">SDN 07</span>
             </div>
             @if($subtext)
-                <span class="text-[11px] font-medium {{ $isOnDark ? 'text-[#4A5163]' : 'text-on-surface-variant dark:text-[#4A5163]' }} truncate max-w-[190px]">{{ $subtext }}</span>
+                <span class="text-xs {{ $isOnDark ? 'text-slate-200' : 'text-slate-500 dark:text-slate-400' }} leading-tight w-auto flex-1 mt-0.5">{{ $subtext }}</span>
             @endif
         </div>
     @endif
