@@ -29,12 +29,12 @@
             </button>
         </div>
 
-        <div class="w-full max-w-5xl lg:max-w-6xl mx-auto my-auto">
-            <div class="bg-surface-lowest border border-border-subtle rounded-3xl shadow-xl overflow-hidden max-h-[90vh] lg:max-h-[82vh] flex flex-col justify-center">
-                <div class="grid grid-cols-1 lg:grid-cols-12 h-full items-stretch">
+        <div class="w-full max-w-3xl lg:max-w-3xl mx-auto my-auto h-[90vh] max-h-[92vh] flex flex-col">
+            <div class="bg-surface-lowest border border-border-subtle rounded-3xl shadow-xl overflow-hidden h-full flex flex-col">
+                <div class="grid grid-cols-1 md:grid-cols-12 h-full items-stretch">
                     
-                    <!-- KOLOM KIRI: Panel Foto Gedung Sekolah SDN Jatipulo 07 (Rasio Landscape 5 dari 12) -->
-                    <div class="relative bg-navy-dark min-h-[160px] lg:col-span-5 lg:min-h-full p-4 sm:p-5 lg:p-6 flex flex-col justify-start overflow-hidden order-last lg:order-first">
+                    <!-- KOLOM KIRI: Panel Foto Gedung Sekolah SDN Jatipulo 07 (Portrait Slim ~42%) -->
+                    <div class="relative bg-navy-dark min-h-[160px] md:col-span-5 md:h-full p-4 sm:p-5 flex flex-col justify-start overflow-hidden order-last md:order-first">
                         <!-- Foto Gedung dengan Overlay Halus Transparan -->
                         <div class="absolute inset-0 z-0">
                             <img
@@ -52,25 +52,25 @@
                         </div>
                     </div>
 
-                    <!-- KOLOM KANAN: Form Login Compact (Rasio 7 dari 12) -->
-                    <div class="p-5 sm:p-6 lg:px-8 lg:py-6 lg:col-span-7 flex flex-col justify-center bg-surface-lowest overflow-hidden">
+                    <!-- KOLOM KANAN: Form Login Ramping Memanjang Vertikal (~58%) -->
+                    <div class="p-6 sm:p-8 md:col-span-7 h-full flex flex-col justify-between bg-surface-lowest overflow-hidden">
                         <div>
                             <!-- Header Form -->
-                            <div class="mb-2.5 lg:mb-3">
-                                <div class="lg:hidden mb-2">
+                            <div class="mb-4 sm:mb-5">
+                                <div class="md:hidden mb-2.5">
                                     <x-logo size="sm" />
                                 </div>
-                                <h2 class="text-xl sm:text-2xl font-extrabold text-on-surface tracking-tight leading-tight">
+                                <h2 class="text-2xl font-extrabold text-on-surface tracking-tight leading-tight">
                                     Selamat Datang
                                 </h2>
-                                <p class="text-xs text-on-surface-variant mt-0.5">
+                                <p class="text-xs text-on-surface-variant mt-1">
                                     Masuk ke akun persuratan & administrasi sekolah Anda
                                 </p>
                             </div>
 
                             <!-- Session Status -->
                             @if (session('status'))
-                                <div class="mb-2.5 p-2.5 rounded-xl bg-success-container text-on-success-container border border-success/30 text-xs font-medium flex items-center gap-2" role="status">
+                                <div class="mb-3 p-2.5 rounded-xl bg-success-container text-on-success-container border border-success/30 text-xs font-medium flex items-center gap-2" role="status">
                                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
@@ -80,7 +80,7 @@
 
                             <!-- Error Alert Umum -->
                             @if ($errors->any())
-                                <div class="mb-2.5 p-2.5 rounded-xl bg-error-container text-on-error-container border border-error/30 text-xs font-medium" role="alert">
+                                <div class="mb-3 p-2.5 rounded-xl bg-error-container text-on-error-container border border-error/30 text-xs font-medium" role="alert">
                                     <div class="flex items-center gap-1.5 font-bold mb-0.5">
                                         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <circle cx="12" cy="12" r="10"></circle>
@@ -93,13 +93,13 @@
                                 </div>
                             @endif
 
-                            <!-- Form Autentikasi -->
-                            <form method="POST" action="{{ route('login') }}" class="space-y-2.5 lg:space-y-3">
+                            <!-- Form Autentikasi dengan Spacing Vertikal Lega -->
+                            <form method="POST" action="{{ route('login') }}" class="space-y-4">
                                 @csrf
 
                                 <!-- Email / NIP -->
                                 <div>
-                                    <label for="email" class="block text-xs font-semibold text-on-surface mb-1">
+                                    <label for="email" class="block text-xs font-semibold text-on-surface mb-1.5">
                                         Email atau NIP <span class="text-error" aria-hidden="true">*</span>
                                     </label>
                                     <x-input
@@ -112,13 +112,13 @@
                                         autocomplete="username"
                                         x-model="email"
                                         :error="$errors->first('email')"
-                                        class="!h-9 !py-1.5 text-xs sm:text-sm"
+                                        class="h-10 text-xs sm:text-sm"
                                     />
                                 </div>
 
                                 <!-- Password -->
                                 <div>
-                                    <div class="flex items-center justify-between mb-1">
+                                    <div class="flex items-center justify-between mb-1.5">
                                         <label for="password" class="block text-xs font-semibold text-on-surface">
                                             Kata Sandi <span class="text-error" aria-hidden="true">*</span>
                                         </label>
@@ -137,7 +137,7 @@
                                         autocomplete="current-password"
                                         x-model="password"
                                         :error="$errors->first('password')"
-                                        class="!h-9 !py-1.5 text-xs sm:text-sm"
+                                        class="h-10 text-xs sm:text-sm"
                                     />
                                 </div>
 
@@ -148,15 +148,15 @@
                                             id="remember_me"
                                             type="checkbox"
                                             name="remember"
-                                            class="w-3.5 h-3.5 rounded border-outline-variant text-primary focus:ring-primary focus:ring-offset-2"
+                                            class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary focus:ring-offset-2"
                                         >
-                                        <span class="text-[11px] text-on-surface-variant font-medium">Ingat saya di perangkat ini</span>
+                                        <span class="text-xs text-on-surface-variant font-medium">Ingat saya di perangkat ini</span>
                                     </label>
                                 </div>
 
                                 <!-- Tombol Submit -->
-                                <div class="pt-0.5">
-                                    <x-button type="submit" variant="primary" size="md" class="w-full !py-2 text-xs sm:text-sm font-bold">
+                                <div class="pt-1">
+                                    <x-button type="submit" variant="primary" size="md" class="w-full h-10 text-sm font-bold shadow-sm">
                                         <span>Masuk ke Sistem</span>
                                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
@@ -167,43 +167,43 @@
 
                             <!-- Quick Role Select Demo Chips (Hanya di local untuk memudahkan pengujian) -->
                             @if (app()->environment('local'))
-                                <div class="mt-2.5 pt-2 border-t border-border-subtle">
-                                    <p class="text-[9.5px] font-bold uppercase tracking-wider text-outline mb-1.5">
+                                <div class="mt-4 pt-3 border-t border-border-subtle">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-outline mb-2">
                                         Masuk Cepat Uji Coba Peran (Lokal)
                                     </p>
-                                    <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                                         <button
                                             type="button"
                                             @click="fillRole('admin@archiva.test')"
-                                            class="px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-center transition-colors truncate"
+                                            class="px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-medium text-on-surface-variant text-center transition-colors truncate"
                                         >
                                             🛡️ Admin
                                         </button>
                                         <button
                                             type="button"
                                             @click="fillRole('kepsek@archiva.test')"
-                                            class="px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-center transition-colors truncate"
+                                            class="px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-medium text-on-surface-variant text-center transition-colors truncate"
                                         >
                                             🏛️ Kepsek
                                         </button>
                                         <button
                                             type="button"
                                             @click="fillRole('tu@archiva.test')"
-                                            class="px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-center transition-colors truncate"
+                                            class="px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-medium text-on-surface-variant text-center transition-colors truncate"
                                         >
                                             📝 TU
                                         </button>
                                         <button
                                             type="button"
                                             @click="fillRole('guru@archiva.test')"
-                                            class="px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-center transition-colors truncate"
+                                            class="px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-medium text-on-surface-variant text-center transition-colors truncate"
                                         >
                                             📚 Guru
                                         </button>
                                         <button
                                             type="button"
                                             @click="fillRole('tendik@archiva.test')"
-                                            class="px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-center transition-colors truncate"
+                                            class="col-span-2 sm:col-span-1 px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-medium text-on-surface-variant text-center transition-colors truncate"
                                         >
                                             🔧 Tendik
                                         </button>
@@ -213,8 +213,8 @@
                         </div>
 
                         <!-- Footer Legal -->
-                        <div class="mt-2.5 pt-2 border-t border-border-subtle text-center">
-                            <p class="text-[10px] text-on-surface-variant leading-relaxed">
+                        <div class="mt-4 pt-3 border-t border-border-subtle text-center">
+                            <p class="text-[10.5px] text-on-surface-variant leading-relaxed">
                                 Dengan masuk ke sistem, Anda menyetujui ketentuan kedinasan dan kebijakan administrasi persuratan internal SDN Jatipulo 07 Jakarta.
                             </p>
                         </div>
