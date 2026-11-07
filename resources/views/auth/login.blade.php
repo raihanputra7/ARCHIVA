@@ -1,5 +1,5 @@
 <x-guest-layout title="Portal Login — ARCHIVA SDN Jatipulo 07">
-    <div class="min-h-screen bg-surface flex items-center justify-center p-4 sm:p-6 lg:p-8" x-data="{
+    <div class="min-h-screen lg:h-screen lg:overflow-hidden bg-surface flex items-center justify-center p-3 sm:p-4 lg:p-6" x-data="{
         email: '{{ old('email', '') }}',
         password: '',
         fillRole(roleEmail) {
@@ -11,7 +11,7 @@
         }
     }">
         <!-- Floating Theme Toggle for Login Page -->
-        <div class="fixed top-4 right-4 z-50">
+        <div class="fixed top-3.5 right-3.5 z-50">
             <button
                 type="button"
                 @click="$store.theme.toggle()"
@@ -29,61 +29,48 @@
             </button>
         </div>
 
-        <div class="w-full max-w-5xl mx-auto">
-            <div class="bg-surface-lowest border border-border-subtle rounded-3xl shadow-lg overflow-hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-2">
+        <div class="w-full max-w-5xl mx-auto my-auto">
+            <div class="bg-surface-lowest border border-border-subtle rounded-3xl shadow-xl overflow-hidden lg:max-h-[calc(100vh-2.5rem)] flex flex-col justify-center">
+                <div class="grid grid-cols-1 lg:grid-cols-2 lg:h-full items-stretch">
                     
-                    <!-- KOLOM KIRI: Panel Navy & Foto Gedung Sekolah -->
-                    <div class="relative bg-navy-dark min-h-[300px] lg:min-h-[640px] p-6 sm:p-8 lg:p-10 flex flex-col justify-between overflow-hidden order-last lg:order-first">
-                        <!-- Foto Gedung dengan Overlay Navy Gelap -->
+                    <!-- KOLOM KIRI: Panel Foto Gedung Sekolah SDN Jatipulo 07 -->
+                    <div class="relative bg-navy-dark min-h-[220px] lg:min-h-full p-6 sm:p-7 flex flex-col justify-start overflow-hidden order-last lg:order-first">
+                        <!-- Foto Gedung dengan Overlay Halus Transparan -->
                         <div class="absolute inset-0 z-0">
                             <img
                                 src="{{ asset('images/gedung-sdn07.jpg') }}"
                                 alt="Gedung SDN Jatipulo 07 Jakarta"
-                                class="w-full h-full object-cover opacity-35 filter brightness-75 scale-105 hover:scale-100 transition-transform duration-700 ease-out"
+                                class="w-full h-full object-cover object-center opacity-95 filter brightness-100 contrast-[1.02] scale-100 hover:scale-105 transition-transform duration-700 ease-out"
                             >
-                            <div class="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/70 to-navy-dark/90"></div>
+                            <!-- Overlay Gradient Halus Transparan: foto gedung tetap terang, jelas, dan kontras dengan logo -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-navy-dark/40 via-transparent to-navy-dark/25 pointer-events-none"></div>
                         </div>
 
-                        <!-- Top: Logo Sekolah di Panel Putih (Wajib DESIGN_SYSTEM.md Bagian 1 Aturan 2) -->
+                        <!-- Top: Logo Sekolah di Panel Putih Rapi (Wajib DESIGN_SYSTEM.md Bagian 1 Aturan 2) -->
                         <div class="relative z-10 flex items-start">
-                            <x-logo variant="on-dark" size="md" />
-                        </div>
-
-                        <!-- Bottom: Slogan & Deskripsi Sekolah -->
-                        <div class="relative z-10 space-y-3 mt-12 lg:mt-0">
-                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-lowest/15 backdrop-blur-sm border border-white/20 text-xs font-semibold text-white">
-                                <span class="w-2 h-2 rounded-full bg-gold"></span>
-                                <span>Gedung 4 Lantai • Sarana Pendidikan Terpadu</span>
-                            </div>
-                            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
-                                Sistem Administrasi Persuratan Terpadu
-                            </h1>
-                            <p class="text-sm text-gray-300 leading-relaxed max-w-md">
-                                Mendukung tata kelola persuratan dinas, disposisi pimpinan, dan pengarsipan digital SDN Jatipulo 07 Jakarta Barat secara transparan dan terintegrasi.
-                            </p>
+                            <x-logo variant="on-dark" size="md" class="shadow-md border border-white/80" />
                         </div>
                     </div>
 
                     <!-- KOLOM KANAN: Form Login -->
-                    <div class="p-6 sm:p-10 lg:p-12 flex flex-col justify-between bg-surface-lowest">
+                    <div class="p-5 sm:p-7 lg:px-8 lg:py-6 flex flex-col justify-between bg-surface-lowest">
                         <div>
                             <!-- Header Form -->
-                            <div class="mb-8">
-                                <div class="lg:hidden mb-6">
+                            <div class="mb-3.5 lg:mb-4">
+                                <div class="lg:hidden mb-3">
                                     <x-logo size="md" />
                                 </div>
-                                <h2 class="text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+                                <h2 class="text-2xl font-extrabold text-on-surface tracking-tight leading-tight">
                                     Selamat Datang
                                 </h2>
-                                <p class="text-sm text-on-surface-variant mt-1.5">
+                                <p class="text-xs sm:text-sm text-on-surface-variant mt-1">
                                     Masuk ke akun persuratan & administrasi sekolah Anda
                                 </p>
                             </div>
 
                             <!-- Session Status -->
                             @if (session('status'))
-                                <div class="mb-5 p-3.5 rounded-xl bg-success-container text-on-success-container border border-success/30 text-xs font-medium flex items-center gap-2" role="status">
+                                <div class="mb-3 p-3 rounded-xl bg-success-container text-on-success-container border border-success/30 text-xs font-medium flex items-center gap-2" role="status">
                                     <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
@@ -93,8 +80,8 @@
 
                             <!-- Error Alert Umum -->
                             @if ($errors->any())
-                                <div class="mb-5 p-3.5 rounded-xl bg-error-container text-on-error-container border border-error/30 text-xs font-medium" role="alert">
-                                    <div class="flex items-center gap-2 font-bold mb-1">
+                                <div class="mb-3 p-3 rounded-xl bg-error-container text-on-error-container border border-error/30 text-xs font-medium" role="alert">
+                                    <div class="flex items-center gap-2 font-bold mb-0.5">
                                         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <circle cx="12" cy="12" r="10"></circle>
                                             <line x1="12" y1="8" x2="12" y2="12"></line>
@@ -107,7 +94,7 @@
                             @endif
 
                             <!-- Form Autentikasi -->
-                            <form method="POST" action="{{ route('login') }}" class="space-y-4">
+                            <form method="POST" action="{{ route('login') }}" class="space-y-3 lg:space-y-3.5">
                                 @csrf
 
                                 <!-- Email / NIP -->
@@ -128,8 +115,8 @@
 
                                 <!-- Password -->
                                 <div>
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <label for="password" class="block text-sm font-semibold text-on-surface">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label for="password" class="block text-xs font-semibold text-on-surface">
                                             Kata Sandi <span class="text-error" aria-hidden="true">*</span>
                                         </label>
                                         @if (Route::has('password.request'))
@@ -151,7 +138,7 @@
                                 </div>
 
                                 <!-- Remember Me -->
-                                <div class="flex items-center justify-between pt-1">
+                                <div class="flex items-center justify-between pt-0.5">
                                     <label for="remember_me" class="inline-flex items-center gap-2 cursor-pointer select-none">
                                         <input
                                             id="remember_me"
@@ -164,8 +151,8 @@
                                 </div>
 
                                 <!-- Tombol Submit -->
-                                <div class="pt-2">
-                                    <x-button type="submit" variant="primary" size="lg" class="w-full">
+                                <div class="pt-1">
+                                    <x-button type="submit" variant="primary" size="md" class="w-full py-2.5 text-sm font-bold">
                                         <span>Masuk ke Sistem</span>
                                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
@@ -176,43 +163,43 @@
 
                             <!-- Quick Role Select Demo Chips (Hanya di local untuk memudahkan pengujian) -->
                             @if (app()->environment('local'))
-                                <div class="mt-6 pt-5 border-t border-border-subtle">
-                                    <p class="text-[11px] font-bold uppercase tracking-wider text-outline mb-2.5">
+                                <div class="mt-3.5 pt-3 border-t border-border-subtle">
+                                    <p class="text-[10px] font-bold uppercase tracking-wider text-outline mb-1.5">
                                         Masuk Cepat Uji Coba Peran (Lokal)
                                     </p>
                                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                                         <button
                                             type="button"
                                             @click="fillRole('admin@archiva.test')"
-                                            class="px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-semibold text-on-surface-variant text-left transition-colors truncate"
+                                            class="px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-left transition-colors truncate"
                                         >
                                             🛡️ Admin
                                         </button>
                                         <button
                                             type="button"
                                             @click="fillRole('kepsek@archiva.test')"
-                                            class="px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-semibold text-on-surface-variant text-left transition-colors truncate"
+                                            class="px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-left transition-colors truncate"
                                         >
                                             🏛️ Kepsek
                                         </button>
                                         <button
                                             type="button"
                                             @click="fillRole('tu@archiva.test')"
-                                            class="px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-semibold text-on-surface-variant text-left transition-colors truncate"
+                                            class="px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-left transition-colors truncate"
                                         >
                                             📝 Tata Usaha
                                         </button>
                                         <button
                                             type="button"
                                             @click="fillRole('guru@archiva.test')"
-                                            class="px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-semibold text-on-surface-variant text-left transition-colors truncate"
+                                            class="px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-left transition-colors truncate"
                                         >
                                             📚 Guru
                                         </button>
                                         <button
                                             type="button"
                                             @click="fillRole('tendik@archiva.test')"
-                                            class="col-span-2 sm:col-span-1 px-2.5 py-1.5 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[11px] font-semibold text-on-surface-variant text-left transition-colors truncate"
+                                            class="col-span-2 sm:col-span-1 px-2 py-1 rounded-lg border border-border-subtle bg-surface-container-low hover:bg-primary-container hover:text-primary text-[10.5px] font-medium text-on-surface-variant text-left transition-colors truncate"
                                         >
                                             🔧 Tendik
                                         </button>
@@ -222,8 +209,8 @@
                         </div>
 
                         <!-- Footer Legal -->
-                        <div class="mt-8 pt-4 border-t border-border-subtle text-center">
-                            <p class="text-xs text-on-surface-variant leading-relaxed">
+                        <div class="mt-3 pt-2.5 border-t border-border-subtle text-center">
+                            <p class="text-[10.5px] text-on-surface-variant leading-relaxed">
                                 Dengan masuk ke sistem, Anda menyetujui ketentuan kedinasan dan kebijakan administrasi persuratan internal SDN Jatipulo 07 Jakarta.
                             </p>
                         </div>
