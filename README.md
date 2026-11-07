@@ -1,58 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ARCHIVA — Sistem Informasi Persuratan & Disposisi Digital
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/images/logo-sdn-jatipulo07.png" alt="Logo SDN Jatipulo 07" width="96">
 </p>
 
-## About Laravel
+<p align="center">
+  <strong>SDN Jatipulo 07 Jakarta Barat</strong><br>
+  Platform tata kelola dokumen dinas, registrasi surat masuk/keluar, dan disposisi instruksi berbasis peran.
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📌 Tentang ARCHIVA
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**ARCHIVA** adalah aplikasi web manajemen naskah dinas resmi yang dirancang khusus untuk memenuhi proses bisnis persuratan riil di lingkungan Sekolah Dasar Negeri (SDN Jatipulo 07). ARCHIVA menggantikan pencatatan buku agenda manual dengan sistem arsip digital terpadu, pelacakan status secara real-time, dan alur disposisi instruksi yang akuntabel.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## ✨ Fitur Utama
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **📥 Tata Kelola Surat Masuk**
+  - Registrasi surat masuk dengan format penomoran agenda otomatis (`ARC/SM/YYYY/XXXX`).
+  - Klasifikasi kepentingan sumber surat: Dinas Pendidikan/Pemerintah, Orang Tua/Wali Murid, serta Lembaga/Mitra Swasta.
+  - Unggah dan pratinjau berkas digital (PDF/gambar).
+  - Pelacakan status terpadu (*Diterima*, *Didisposisikan*, *Diproses*, *Selesai*).
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- **📝 Alur Disposisi Multi-Assignee & Riwayat Status**
+  - Pembuatan lembar disposisi jamak (*multi-assignee*) kepada Guru, TU, atau Tendik dalam satu kali instruksi.
+  - Penentuan tenggat waktu, sifat disposisi (*Biasa*, *Penting*, *Segera*, *Rahasia*), dan catatan instruksi pimpinan.
+  - Pelacakan tindak lanjut penerima disposisi dengan audit trail otomatis (*Riwayat Status*).
+  - Cetak Lembar Disposisi standar kedinasan yang siap diunduh atau diprint.
 
-## Agentic Development
+- **📤 Manajemen Surat Keluar & Relasi Balasan**
+  - Pencatatan dokumen/naskah dinas resmi sekolah untuk pihak eksternal maupun internal.
+  - Integrasi dua arah antara Surat Masuk dan Surat Keluar (penerbitan surat balasan resmi langsung merujuk pada surat masuk terkait).
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- **👥 Multi-Role & Autentikasi Berjenjang**
+  - **Kepala Sekolah**: Disposisi surat, pemantauan seluruh instruksi, dan dashboard analitik eksekutif.
+  - **Tata Usaha (TU)**: Pencatatan surat masuk & keluar, penomoran agenda, dan penerbitan disposisi.
+  - **Guru**: Monitoring tugas disposisi tindak lanjut dan pengarsipan.
+  - **Tenaga Pendidik (Tendik)**: Pemantauan instruksi operasional dan sarpras.
+  - **Admin**: Tata kelola pengguna dan konfigurasi sistem.
 
+- **🎨 Desain Antarmuka Eksklusif**
+  - Dibangun berdasarkan *Design System* resmi SDN Jatipulo 07 (Navy & Gold).
+  - Dukungan **Mode Terang** dan **Mode Gelap (Dark Mode)** yang ramah mata.
+  - Sidebar responsif dengan interaksi toggle buka/tutup yang dipicu oleh logo sekolah.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Backend**: Laravel 12 (PHP 8.3+)
+- **Frontend**: Blade Components, Tailwind CSS v4, Alpine.js, Vite
+- **Visualisasi & Analitik**: Chart.js
+- **Basis Data**: MySQL (Produksi / Dev), SQLite (Automated Tests)
+- **Code Quality**: Laravel Pint, PHPUnit (Feature & Unit Tests)
+
+---
+
+## 🚀 Panduan Instalasi
+
+### 1. Prasyarat Sistem
+- PHP >= 8.2 (ekstensi: pdo, mbstring, openssl, tokenizer, xml, ctype, json)
+- Composer >= 2.x
+- Node.js >= 18.x & NPM
+- MySQL >= 8.0 / MariaDB >= 10.4
+
+### 2. Kloning & Pemasangan Dependensi
 ```bash
-composer require laravel/boost --dev
+# Clone repositori
+git clone https://github.com/raihanputra7/ARCHIVA.git
+cd ARCHIVA
 
-php artisan boost:install
+# Install paket PHP
+composer install
+
+# Install paket JavaScript
+npm install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 3. Konfigurasi Lingkungan (.env)
+```bash
+# Salin template environment
+cp .env.example .env
 
-## Contributing
+# Generate application key
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Sesuaikan konfigurasi database pada berkas `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=archiva
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Code of Conduct
+### 4. Migrasi & Seeder Database
+```bash
+# Jalankan migrasi tabel dan data awal akun demo
+php artisan migrate --seed
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Hubungkan direktori storage file upload
+php artisan storage:link
+```
 
-## Security Vulnerabilities
+### 5. Kompilasi Aset & Menjalankan Server
+```bash
+# Kompilasi frontend (mode produksi)
+npm run build
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Jalankan server lokal
+php artisan serve
+```
+Akses aplikasi melalui peramban di: `http://localhost:8000`
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🧪 Pengujian Otomatis (Testing)
+
+Aplikasi dilengkapi dengan rangkaian automated test untuk memvalidasi alur disposisi, perizinan role, dan relasi persuratan:
+
+```bash
+# Menjalankan seluruh pengujian PHPUnit
+php artisan test
+
+# Menjalankan linter code style (Pint)
+./vendor/bin/pint --test
+```
+
+---
+
+## 📄 Lisensi
+
+Aplikasi dikembangkan untuk kebutuhan operasional kedinasan **SDN Jatipulo 07 Jakarta Barat**.
