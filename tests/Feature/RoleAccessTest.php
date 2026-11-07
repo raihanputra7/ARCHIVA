@@ -91,4 +91,40 @@ class RoleAccessTest extends TestCase
         // Tendik trying to access admin dashboard -> 403
         $this->actingAs($tendik)->get('/dashboard/admin')->assertForbidden();
     }
+
+    public function test_sidebar_active_state_switches_correctly_per_route(): void
+    {
+        $tu = User::factory()->create(['role' => Role::TATA_USAHA]);
+
+        // 1. Kunjungi Dashboard Tata Usaha
+        $responseDashboard = $this->actingAs($tu)->get(route('dashboard.tata-usaha'));
+        $responseDashboard->assertOk();
+        $contentDash = $responseDashboard->getContent();
+
+        // Dashboard aktif, Surat Masuk & Surat Keluar tidak aktif
+        $this->assertStringContainsString('border-l-[3px] border-secondary', $contentDash);
+        // Pastikan link surat masuk di halaman dashboard TIDAK aktif
+        $this->assertMatchesRegularExpression('/href="[^"]*\/surat-masuk"[^>]*class="[^"]*text-on-surface-variant/', $contentDash);
+
+        // 2. Kunjungi Surat Masuk Index
+        $responseSuratMasuk = $this->actingAs($tu)->get(route('surat-masuk.index'));
+        $responseSuratMasuk->assertOk();
+        $contentSM = $responseSuratMasuk->getContent();
+
+        // Di halaman Surat Masuk: link Surat Masuk memiliki class aktif
+        $this->assertMatchesRegularExpression('/href="[^"]*\/surat-masuk"[^>]*class="[^"]*bg-primary-container text-primary border-l-\[3px\] border-secondary/', $contentSM);
+        // Link Dashboard di halaman Surat Masuk TIDAK aktif (tidak memiliki border-secondary)
+        $this->assertMatchesRegularExpression('/href="[^"]*\/dashboard\/tata-usaha"[^>]*class="[^"]*text-on-surface-variant/', $contentSM);
+
+        // 3. Kunjungi Surat Keluar Index
+        $responseSuratKeluar = $this->actingAs($tu)->get(route('surat-keluar.index'));
+        $responseSuratKeluar->assertOk();
+        $contentSK = $responseSuratKeluar->getContent();
+
+        // Di halaman Surat Keluar: link Surat Keluar memiliki class aktif
+        $this->assertMatchesRegularExpression('/href="[^"]*\/surat-keluar"[^>]*class="[^"]*bg-primary-container text-primary border-l-\[3px\] border-secondary/', $contentSK);
+        // Link Dashboard & Surat Masuk TIDAK aktif
+        $this->assertMatchesRegularExpression('/href="[^"]*\/dashboard\/tata-usaha"[^>]*class="[^"]*text-on-surface-variant/', $contentSK);
+        $this->assertMatchesRegularExpression('/href="[^"]*\/surat-masuk"[^>]*class="[^"]*text-on-surface-variant/', $contentSK);
+    }
 }

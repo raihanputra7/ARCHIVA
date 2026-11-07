@@ -17,16 +17,30 @@
 <header class="h-16 bg-surface-lowest border-b border-border-subtle sticky top-0 z-30 transition-colors">
     <div class="h-full px-4 sm:px-6 flex items-center justify-between gap-4">
         
-        <!-- Left: Hamburger button for mobile drawer -->
-        <div class="flex items-center gap-3">
+        <!-- Left: Hamburger button for mobile drawer & Desktop Collapse Toggle -->
+        <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Mobile Drawer Toggle -->
             <button
                 type="button"
-                @click="$store.sidebar.toggle()"
+                @click="$store.sidebar.toggleMobile()"
                 class="lg:hidden p-2 rounded-lg text-on-surface hover:bg-surface-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 aria-label="Buka Menu Navigasi"
             >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+            <!-- Desktop Collapse Toggle -->
+            <button
+                type="button"
+                @click="$store.sidebar.toggleCollapse()"
+                class="hidden lg:inline-flex items-center justify-center p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                :title="$store.sidebar.collapsed ? 'Perluas Sidebar' : 'Ciutkan Sidebar'"
+                :aria-label="$store.sidebar.collapsed ? 'Perluas Sidebar' : 'Ciutkan Sidebar'"
+            >
+                <svg class="w-5 h-5 transition-transform duration-200" :class="$store.sidebar.collapsed ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
                 </svg>
             </button>
 

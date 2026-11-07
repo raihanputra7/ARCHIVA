@@ -26,11 +26,26 @@ document.addEventListener('alpine:init', () => {
 
     Alpine.store('sidebar', {
         open: false,
-        toggle() {
+        collapsed: localStorage.getItem('archiva_sidebar_collapsed') === 'true',
+        toggleMobile() {
             this.open = !this.open;
         },
-        close() {
+        closeMobile() {
             this.open = false;
+        },
+        toggleCollapse() {
+            this.collapsed = !this.collapsed;
+            localStorage.setItem('archiva_sidebar_collapsed', this.collapsed ? 'true' : 'false');
+        },
+        toggle() {
+            if (window.innerWidth < 1024) {
+                this.toggleMobile();
+            } else {
+                this.toggleCollapse();
+            }
+        },
+        close() {
+            this.closeMobile();
         }
     });
 });

@@ -22,10 +22,13 @@
     <body class="h-full bg-surface text-on-surface font-sans antialiased">
         <div class="min-h-full flex flex-col">
             <!-- Sidebar Navigation -->
-            <x-sidebar :active="$active ?? 'dashboard'" />
+            <x-sidebar :active="$active ?? null" />
 
-            <!-- Main Shell (Offset for desktop 264px sidebar) -->
-            <div class="lg:pl-[264px] flex flex-col min-h-screen">
+            <!-- Main Shell (Offset menyesuaikan status collapse sidebar) -->
+            <div
+                :class="$store.sidebar.collapsed ? 'lg:pl-[76px]' : 'lg:pl-[264px]'"
+                class="flex flex-col min-h-screen transition-all duration-300 ease-in-out"
+            >
                 <!-- Topbar -->
                 <x-topbar />
 

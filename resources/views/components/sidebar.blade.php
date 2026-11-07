@@ -1,5 +1,5 @@
 @props([
-    'active' => 'dashboard',
+    'active' => null,
 ])
 
 @php
@@ -100,7 +100,7 @@
 <!-- Mobile Backdrop -->
 <div
     x-show="$store.sidebar.open"
-    @click="$store.sidebar.close()"
+    @click="$store.sidebar.closeMobile()"
     x-transition:enter="transition-opacity ease-linear duration-200"
     x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100"
@@ -114,17 +114,48 @@
 
 <!-- Sidebar / Drawer -->
 <aside
-    :class="$store.sidebar.open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-    class="fixed inset-y-0 left-0 z-50 w-[264px] bg-surface-lowest border-r border-border-subtle flex flex-col justify-between transition-transform duration-200 ease-in-out"
+    :class="[
+        $store.sidebar.open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+        $store.sidebar.collapsed ? 'lg:w-[76px]' : 'lg:w-[264px]'
+    ]"
+    class="fixed inset-y-0 left-0 z-50 w-[264px] bg-surface-lowest border-r border-border-subtle flex flex-col justify-between transition-all duration-300 ease-in-out select-none"
 >
     <!-- Top: Logo & Nav -->
-    <div class="flex-1 overflow-y-auto">
+    <div class="flex-1 overflow-y-auto overflow-x-hidden">
         <!-- Logo Area -->
-        <div class="h-16 px-5 border-b border-border-subtle flex items-center justify-between">
-            <x-logo size="md" />
+        <div class="h-16 px-4 border-b border-border-subtle flex items-center justify-between overflow-hidden">
+            <!-- Mode Normal (Expanded) -->
+            <div x-show="!$store.sidebar.collapsed" class="flex items-center gap-2">
+                <x-logo size="md" />
+            </div>
+
+            <!-- Mode Collapsed (Desktop Mini) -->
+            <div x-show="$store.sidebar.collapsed" class="hidden lg:flex items-center justify-center w-full" title="ARCHIVA — SDN Jatipulo 07">
+                <img
+                    src="{{ asset('images/logo-sdn-jatipulo07.png') }}"
+                    alt="Logo SDN Jatipulo 07"
+                    class="h-9 w-auto object-contain flex-shrink-0"
+                    loading="eager"
+                >
+            </div>
+
+            <!-- Tombol Collapse Desktop di Sidebar Header -->
             <button
                 type="button"
-                @click="$store.sidebar.close()"
+                @click="$store.sidebar.toggleCollapse()"
+                class="hidden lg:inline-flex p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
+                :title="$store.sidebar.collapsed ? 'Perluas Sidebar' : 'Ciutkan Sidebar'"
+                aria-label="Toggle Sidebar"
+            >
+                <svg class="w-4 h-4 transition-transform duration-200" :class="$store.sidebar.collapsed ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                </svg>
+            </button>
+
+            <!-- Tombol Close Drawer Mobile -->
+            <button
+                type="button"
+                @click="$store.sidebar.closeMobile()"
                 class="lg:hidden p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container"
                 aria-label="Tutup Menu"
             >
@@ -135,16 +166,33 @@
         </div>
 
         <!-- Navigation Sections -->
-        <nav class="p-4 space-y-6">
+        <nav class="p-3 space-y-5">
             @foreach($navSections as $section)
                 <div>
-                    <h4 class="px-3 text-[11px] font-bold uppercase tracking-wider text-outline mb-2">
+                    <h4 x-show="!$store.sidebar.collapsed" class="px-3 text-[11px] font-bold uppercase tracking-wider text-outline mb-2 transition-opacity duration-200">
                         {{ $section['title'] }}
                     </h4>
+                    <div x-show="$store.sidebar.collapsed" class="my-2 border-t border-border-subtle/60"></div>
+
                     <div class="space-y-1">
                         @foreach($section['items'] as $item)
                             @php
-                                $isItemActive = ($active === $item['id']);
+                                $isItemActive = false;
+
+                                if ($item['id'] === 'dashboard') {
+                                    $isItemActive = request()->routeIs('dashboard*') && !request()->routeIs('dashboard.kepala-sekolah.analytics*');
+                                } elseif (in_array($item['id'], ['surat_masuk', 'disposisi', 'instruksi'], true)) {
+                                    $isItemActive = request()->routeIs('surat-masuk*');
+                                } elseif (in_array($item['id'], ['surat_keluar', 'surat-keluar'], true)) {
+                                    $isItemActive = request()->routeIs('surat-keluar*');
+                                } elseif ($item['id'] === 'analytics') {
+                                    $isItemActive = request()->routeIs('dashboard.kepala-sekolah.analytics*');
+                                } elseif (in_array($item['id'], ['profile', 'pengaturan'], true)) {
+                                    $isItemActive = request()->routeIs('profile*') || request()->routeIs('pengaturan*');
+                                } else {
+                                    $isItemActive = ($active === $item['id']) || (isset($item['route']) && \Illuminate\Support\Facades\Route::has($item['route']) && request()->routeIs($item['route'].'*'));
+                                }
+
                                 $isDisabled = !empty($item['disabled']);
                                 $hasRoute = \Illuminate\Support\Facades\Route::has($item['route']);
                                 $href = $hasRoute ? route($item['route']) : '#';
@@ -164,29 +212,35 @@
 
                             @if($isDisabled)
                                 <div
-                                    class="flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium text-outline opacity-60 cursor-not-allowed select-none"
-                                    title="Segera hadir"
+                                    class="flex items-center rounded-lg text-xs font-medium text-outline opacity-60 cursor-not-allowed select-none transition-all duration-150"
+                                    :class="$store.sidebar.collapsed ? 'justify-center px-2 py-2.5' : 'justify-between px-3 py-2.5'"
+                                    :title="$store.sidebar.collapsed ? '{{ $item['label'] }} (Segera hadir)' : 'Segera hadir'"
                                 >
                                     <div class="flex items-center gap-3">
-                                        <svg class="w-4 h-4 text-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 text-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             {!! $iconSvg !!}
                                         </svg>
-                                        <span>{{ $item['label'] }}</span>
+                                        <span x-show="!$store.sidebar.collapsed" class="truncate">{{ $item['label'] }}</span>
                                     </div>
-                                    <span class="text-[10px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant font-normal">Nanti</span>
+                                    <span x-show="!$store.sidebar.collapsed" class="text-[10px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant font-normal">Nanti</span>
                                 </div>
                             @else
                                 <a
                                     href="{{ $href }}"
-                                    class="flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold transition-colors duration-150 {{ $isItemActive 
-                                        ? 'bg-primary-container text-primary border-l-[3px] border-secondary' 
-                                        : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low' }}"
+                                    :title="$store.sidebar.collapsed ? '{{ $item['label'] }}' : ''"
+                                    :class="[
+                                        $store.sidebar.collapsed ? 'justify-center px-2 py-2.5' : 'justify-between px-3 py-2.5',
+                                        {{ $isItemActive ? 'true' : 'false' }} 
+                                            ? 'bg-primary-container text-primary border-l-[3px] border-secondary font-bold' 
+                                            : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-semibold'
+                                    ]"
+                                    class="flex items-center rounded-lg text-xs transition-colors duration-150 group"
                                 >
                                     <div class="flex items-center gap-3">
-                                        <svg class="w-4 h-4 {{ $isItemActive ? 'text-primary' : 'text-outline' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 flex-shrink-0 {{ $isItemActive ? 'text-primary' : 'text-outline group-hover:text-on-surface' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             {!! $iconSvg !!}
                                         </svg>
-                                        <span>{{ $item['label'] }}</span>
+                                        <span x-show="!$store.sidebar.collapsed" class="truncate">{{ $item['label'] }}</span>
                                     </div>
                                 </a>
                             @endif
@@ -198,10 +252,11 @@
     </div>
 
     <!-- Bottom: User Meta & Quick Logout -->
-    <div class="p-4 border-t border-border-subtle bg-surface-container-low/50">
-        <div class="flex items-center justify-between gap-3">
+    <div class="p-3 border-t border-border-subtle bg-surface-container-low/50 overflow-hidden">
+        <!-- Expanded User Meta -->
+        <div x-show="!$store.sidebar.collapsed" class="flex items-center justify-between gap-2.5">
             <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs flex-shrink-0">
+                <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-xs">
                     {{ strtoupper(substr($user?->name ?? 'U', 0, 1)) }}
                 </div>
                 <div class="min-w-0">
@@ -210,6 +265,29 @@
                 </div>
             </div>
             
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button
+                    type="submit"
+                    class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container/20 transition-colors"
+                    title="Keluar ke Portal (Logout)"
+                    aria-label="Keluar"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Collapsed Mini User Meta -->
+        <div x-show="$store.sidebar.collapsed" class="hidden lg:flex flex-col items-center justify-center gap-2 py-1">
+            <div
+                class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs shadow-xs"
+                title="{{ $user?->name }} ({{ str_replace('_', ' ', $role) }})"
+            >
+                {{ strtoupper(substr($user?->name ?? 'U', 0, 1)) }}
+            </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button
