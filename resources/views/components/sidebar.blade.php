@@ -99,8 +99,9 @@
 
 <!-- Mobile Backdrop -->
 <div
-    x-show="$store.sidebar.open"
-    @click="$store.sidebar.closeMobile()"
+    x-show="mobileSidebarOpen"
+    x-cloak
+    @click="mobileSidebarOpen = false"
     x-transition:enter="transition-opacity ease-linear duration-200"
     x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100"
@@ -115,73 +116,71 @@
 <!-- Sidebar / Drawer -->
 <aside
     :class="[
-        $store.sidebar.open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-        $store.sidebar.collapsed ? 'lg:w-20' : 'lg:w-64'
+        sidebarExpanded ? 'w-64 min-w-[16rem]' : 'w-20 min-w-[5rem]',
+        mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
     ]"
-    class="fixed inset-y-0 left-0 z-50 w-64 bg-surface-lowest border-r border-border-subtle flex flex-col justify-between transition-all duration-200 ease-in-out select-none"
+    class="fixed inset-y-0 left-0 z-50 bg-surface-lowest border-r border-border-subtle flex flex-col justify-between transition-[width,transform] duration-300 ease-in-out select-none"
 >
     <!-- Top: Logo & Nav -->
     <div class="flex-1 overflow-y-auto overflow-x-hidden">
         <!-- Logo & Header Area -->
-        <div class="h-16 px-4 border-b border-border-subtle flex items-center justify-between overflow-hidden">
-            <!-- Mode Expanded: Logo & Teks Sekolah (Hanya muncul saat expanded) -->
-            <div x-show="!$store.sidebar.collapsed" x-cloak class="flex items-center min-w-0 pr-2">
-                <x-logo size="md" />
+        <div class="h-16 px-3 border-b border-border-subtle flex items-center justify-between overflow-hidden">
+            <!-- Mode Expanded: Logo + teks "ARCHIVA SDN 07" + tombol toggle di sebelah kanan -->
+            <div x-show="sidebarExpanded" class="flex items-center justify-between w-full min-w-0">
+                <a href="{{ route('dashboard') }}" class="flex items-center min-w-0 focus:outline-none" title="ARCHIVA SDN 07">
+                    <x-logo size="sm" :subtext="null" />
+                </a>
+                <div class="flex items-center gap-1 flex-shrink-0">
+                    <button
+                        type="button"
+                        @click="sidebarExpanded = false"
+                        class="hidden lg:inline-flex p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors focus:outline-none"
+                        title="Ciutkan Sidebar"
+                        aria-label="Ciutkan Sidebar"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <button
+                        type="button"
+                        @click="mobileSidebarOpen = false"
+                        class="lg:hidden p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container focus:outline-none"
+                        aria-label="Tutup Menu"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
-            <!-- Mode Collapsed: Tampilkan Cukup 1 Logo Utama di tengah (Hanya muncul saat collapsed) -->
-            <div x-show="$store.sidebar.collapsed" x-cloak class="hidden lg:flex items-center justify-center w-full">
+            <!-- Mode Collapsed: Tampilkan Logo kecil di tengah (klik untuk expand) -->
+            <div x-show="!sidebarExpanded" x-cloak class="hidden lg:flex items-center justify-center w-full">
                 <button
                     type="button"
-                    @click="$store.sidebar.toggleCollapse()"
-                    class="p-1 rounded-xl hover:bg-surface-container transition-colors focus:outline-none"
+                    @click="sidebarExpanded = true"
+                    class="p-2 rounded-xl text-outline hover:text-on-surface hover:bg-surface-container transition-colors focus:outline-none"
                     title="Perluas Sidebar"
                     aria-label="Perluas Sidebar"
                 >
                     <img
                         src="{{ asset('images/logo-sdn-jatipulo07.png') }}"
-                        alt="Logo SDN Jatipulo 07"
+                        alt="SDN 07"
                         class="h-8 w-auto object-contain flex-shrink-0"
                     >
                 </button>
             </div>
-
-            <!-- Tombol Collapse (<<) di pojok kanan atas saat Expanded (Desktop) -->
-            <button
-                type="button"
-                x-show="!$store.sidebar.collapsed"
-                x-cloak
-                @click="$store.sidebar.toggleCollapse()"
-                class="hidden lg:inline-flex ml-auto flex-shrink-0 p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors focus:outline-none"
-                title="Ciutkan Sidebar"
-                aria-label="Ciutkan Sidebar"
-            >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
-                </svg>
-            </button>
-
-            <!-- Tombol Tutup Drawer Mobile -->
-            <button
-                type="button"
-                @click="$store.sidebar.closeMobile()"
-                class="lg:hidden ml-auto flex-shrink-0 p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container focus:outline-none"
-                aria-label="Tutup Menu"
-            >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
         </div>
 
         <!-- Navigation Sections -->
-        <nav class="p-3 space-y-5">
+        <nav class="p-3 space-y-4">
             @foreach($navSections as $section)
                 <div>
-                    <h4 x-show="!$store.sidebar.collapsed" x-cloak class="px-3 text-[11px] font-bold uppercase tracking-wider text-outline mb-2 transition-opacity duration-200">
+                    <h4 x-show="sidebarExpanded" class="px-3 text-[11px] font-bold uppercase tracking-wider text-outline mb-2">
                         {{ $section['title'] }}
                     </h4>
-                    <div x-show="$store.sidebar.collapsed" x-cloak class="my-2 border-t border-border-subtle/60"></div>
+                    <div x-show="!sidebarExpanded" x-cloak class="my-2 border-t border-border-subtle/60"></div>
 
                     <div class="space-y-1">
                         @foreach($section['items'] as $item)
@@ -221,36 +220,27 @@
 
                             @if($isDisabled)
                                 <div
-                                    class="flex items-center rounded-lg text-xs font-medium text-outline opacity-60 cursor-not-allowed select-none transition-all duration-150"
-                                    :class="$store.sidebar.collapsed ? 'justify-center px-2 py-2.5' : 'justify-between px-3 py-2.5'"
-                                    :title="$store.sidebar.collapsed ? '{{ $item['label'] }} (Segera hadir)' : 'Segera hadir'"
+                                    :class="sidebarExpanded ? 'justify-start px-3' : 'justify-center px-2'"
+                                    :title="!sidebarExpanded ? '{{ $item['label'] }} (Segera hadir)' : ''"
+                                    class="flex items-center gap-3 py-2.5 rounded-lg text-xs font-medium text-outline opacity-60 cursor-not-allowed select-none transition-colors"
                                 >
-                                    <div class="flex items-center gap-3">
-                                        <svg class="w-4 h-4 text-outline flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            {!! $iconSvg !!}
-                                        </svg>
-                                        <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">{{ $item['label'] }}</span>
-                                    </div>
-                                    <span x-show="!$store.sidebar.collapsed" x-cloak class="text-[10px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant font-normal">Nanti</span>
+                                    <svg class="w-5 h-5 flex-shrink-0 text-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        {!! $iconSvg !!}
+                                    </svg>
+                                    <span x-show="sidebarExpanded" class="truncate">{{ $item['label'] }}</span>
+                                    <span x-show="sidebarExpanded" class="ml-auto text-[10px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant font-normal">Nanti</span>
                                 </div>
                             @else
                                 <a
                                     href="{{ $href }}"
-                                    :title="$store.sidebar.collapsed ? '{{ $item['label'] }}' : ''"
-                                    :class="[
-                                        $store.sidebar.collapsed ? 'justify-center px-2 py-2.5' : 'justify-between px-3 py-2.5',
-                                        {{ $isItemActive ? 'true' : 'false' }} 
-                                            ? 'bg-primary-container text-primary border-l-[3px] border-secondary font-bold' 
-                                            : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-semibold'
-                                    ]"
-                                    class="flex items-center rounded-lg text-xs transition-colors duration-150 group"
+                                    :title="!sidebarExpanded ? '{{ $item['label'] }}' : ''"
+                                    :class="sidebarExpanded ? 'justify-start px-3' : 'justify-center px-2'"
+                                    class="flex items-center gap-3 py-2.5 rounded-lg text-xs transition-colors duration-150 group {{ $isItemActive ? 'bg-primary-container text-primary border-l-[3px] border-secondary font-bold' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-semibold' }}"
                                 >
-                                    <div class="flex items-center gap-3">
-                                        <svg class="w-4 h-4 flex-shrink-0 {{ $isItemActive ? 'text-primary' : 'text-outline group-hover:text-on-surface' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            {!! $iconSvg !!}
-                                        </svg>
-                                        <span x-show="!$store.sidebar.collapsed" x-cloak class="truncate">{{ $item['label'] }}</span>
-                                    </div>
+                                    <svg class="w-5 h-5 flex-shrink-0 {{ $isItemActive ? 'text-primary' : 'text-outline group-hover:text-on-surface' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        {!! $iconSvg !!}
+                                    </svg>
+                                    <span x-show="sidebarExpanded" class="truncate">{{ $item['label'] }}</span>
                                 </a>
                             @endif
                         @endforeach
@@ -262,8 +252,8 @@
 
     <!-- Bottom: User Meta & Quick Logout -->
     <div class="p-3 border-t border-border-subtle bg-surface-container-low/50 overflow-hidden">
-        <!-- Versi Lengkap (Expanded): Baris horizontal rapi Avatar + Nama + Role + Tombol Logout -->
-        <div x-show="!$store.sidebar.collapsed" x-cloak class="flex items-center justify-between gap-2.5">
+        <!-- Ketika sidebarExpanded: Avatar + Nama + Role + Tombol Logout sejajar horizontal -->
+        <div x-show="sidebarExpanded" class="flex items-center justify-between gap-2.5">
             <div class="flex items-center gap-2.5 min-w-0">
                 <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs flex-shrink-0 shadow-xs">
                     {{ strtoupper(substr($user?->name ?? 'U', 0, 1)) }}
@@ -283,31 +273,23 @@
                     aria-label="Keluar"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                     </svg>
                 </button>
             </form>
         </div>
 
-        <!-- Versi Mini/Collapsed (Desktop Saja): 1 Avatar di tengah dengan tombol logout di bawahnya -->
-        <div x-show="$store.sidebar.collapsed" x-cloak class="hidden lg:flex flex-col items-center justify-center gap-2 py-1">
-            <div
-                class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs shadow-xs"
-                title="{{ $user?->name }} ({{ str_replace('_', ' ', $role) }})"
-            >
-                {{ strtoupper(substr($user?->name ?? 'U', 0, 1)) }}
-            </div>
+        <!-- Ketika !sidebarExpanded: Tampilkan HANYA Avatar lingkaran di tengah yang bisa di-klik untuk logout/menu ringkas -->
+        <div x-show="!sidebarExpanded" x-cloak class="hidden lg:flex items-center justify-center">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button
                     type="submit"
-                    class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container/20 transition-colors"
-                    title="Keluar ke Portal (Logout)"
+                    class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs shadow-xs hover:ring-2 hover:ring-error transition-all cursor-pointer"
+                    title="Keluar ke Portal: {{ $user?->name }} ({{ str_replace('_', ' ', $role) }})"
                     aria-label="Keluar"
                 >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                    </svg>
+                    {{ strtoupper(substr($user?->name ?? 'U', 0, 1)) }}
                 </button>
             </form>
         </div>

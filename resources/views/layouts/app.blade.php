@@ -20,14 +20,17 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="h-full bg-surface text-on-surface font-sans antialiased">
-        <div class="min-h-full flex flex-col">
+        <div
+            x-data="{ sidebarExpanded: true, mobileSidebarOpen: false }"
+            class="min-h-full flex flex-col"
+        >
             <!-- Sidebar Navigation -->
             <x-sidebar :active="$active ?? null" />
 
             <!-- Main Shell (Offset menyesuaikan status collapse sidebar: w-64 vs w-20) -->
             <div
-                :class="$store.sidebar.collapsed ? 'lg:pl-20' : 'lg:pl-64'"
-                class="flex flex-col min-h-screen transition-all duration-200 ease-in-out"
+                :class="sidebarExpanded ? 'lg:pl-64' : 'lg:pl-20'"
+                class="flex flex-col min-h-screen transition-[padding] duration-300 ease-in-out"
             >
                 <!-- Topbar -->
                 <x-topbar />
@@ -67,7 +70,7 @@
                 @endif
 
                 <!-- Page Content -->
-                <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+                <main class="flex-1 min-w-0 overflow-auto max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
                     {{ $slot }}
                 </main>
             </div>

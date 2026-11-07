@@ -22,7 +22,7 @@
             <!-- Mobile Drawer Toggle -->
             <button
                 type="button"
-                @click="$store.sidebar.toggleMobile()"
+                @click="mobileSidebarOpen = !mobileSidebarOpen"
                 class="lg:hidden p-2 rounded-lg text-on-surface hover:bg-surface-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 aria-label="Buka Menu Navigasi"
             >
@@ -34,12 +34,12 @@
             <!-- Desktop Collapse Toggle -->
             <button
                 type="button"
-                @click="$store.sidebar.toggleCollapse()"
+                @click="sidebarExpanded = !sidebarExpanded"
                 class="hidden lg:inline-flex items-center justify-center p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                :title="$store.sidebar.collapsed ? 'Perluas Sidebar' : 'Ciutkan Sidebar'"
-                :aria-label="$store.sidebar.collapsed ? 'Perluas Sidebar' : 'Ciutkan Sidebar'"
+                :title="sidebarExpanded ? 'Ciutkan Sidebar' : 'Perluas Sidebar'"
+                :aria-label="sidebarExpanded ? 'Ciutkan Sidebar' : 'Perluas Sidebar'"
             >
-                <svg class="w-5 h-5 transition-transform duration-200" :class="$store.sidebar.collapsed ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 transition-transform duration-200" :class="sidebarExpanded ? '' : 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
                 </svg>
             </button>

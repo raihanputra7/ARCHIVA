@@ -279,9 +279,9 @@ class SuratDisposisiTest extends TestCase
         $this->assertEquals($this->guru->id, $disposisi->to_user_id);
         $this->assertEquals('Menunggu', $disposisi->status);
 
-        // Status surat masuk berubah menjadi 'Didisposisikan'
+        // Status surat masuk berubah menjadi 'didisposisikan'
         $surat->refresh();
-        $this->assertEquals('Didisposisikan', $surat->status);
+        $this->assertEquals('didisposisikan', $surat->status);
     }
 
     public function test_multi_assignee_disposisi_creation_and_audit_trail(): void
@@ -329,9 +329,9 @@ class SuratDisposisiTest extends TestCase
             'status' => 'Menunggu',
         ]);
 
-        // Status surat berubah menjadi Didisposisikan
+        // Status surat berubah menjadi didisposisikan
         $surat->refresh();
-        $this->assertEquals('Didisposisikan', $surat->status);
+        $this->assertEquals('didisposisikan', $surat->status);
 
         // RiwayatStatus mencatat baris transisi disposisi
         $this->assertDatabaseHas('riwayat_status', [
@@ -433,7 +433,7 @@ class SuratDisposisiTest extends TestCase
 
         // Surat masuk ikut berstatus Selesai jika semua disposisi selesai
         $surat->refresh();
-        $this->assertEquals('Selesai', $surat->status);
+        $this->assertEquals('selesai', $surat->status);
     }
 
     public function test_lembar_disposisi_renders_successfully(): void

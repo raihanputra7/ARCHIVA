@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSuratKeluarRequest;
 use App\Models\SuratKeluar;
+use App\Models\SuratMasuk;
 use App\Services\SuratKeluarService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,7 +44,7 @@ class SuratKeluarController extends Controller
 
         $parentSuratMasuk = null;
         if ($request->filled('parent_surat_masuk_id')) {
-            $parentSuratMasuk = \App\Models\SuratMasuk::find($request->integer('parent_surat_masuk_id'));
+            $parentSuratMasuk = SuratMasuk::find($request->integer('parent_surat_masuk_id'));
         }
 
         $metrics = [
