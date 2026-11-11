@@ -42,13 +42,13 @@
                                 alt="Gedung SDN Jatipulo 07 Jakarta"
                                 class="w-full h-full object-cover object-center opacity-95 filter brightness-100 contrast-[1.02] scale-100 hover:scale-105 transition-transform duration-700 ease-out"
                             >
-                            <!-- Overlay Gradient Halus Transparan: foto gedung tetap terang dan kontras dengan logo -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-navy-dark/40 via-transparent to-navy-dark/25 pointer-events-none"></div>
+                            <!-- Overlay Gradient Halus Transparan: foto gedung tetap terang dan teks di atasnya tetap kontras -->
+                            <div class="absolute inset-0 bg-gradient-to-b from-navy-dark/55 via-transparent to-navy-dark/40 pointer-events-none"></div>
                         </div>
 
-                        <!-- Top: Logo Sekolah di Panel Putih Rapi (DESIGN_SYSTEM.md Bagian 1 Aturan 2) -->
+                        <!-- Top: Logo Sekolah di Panel Putih Rapi -->
                         <div class="relative z-10 flex items-start">
-                            <x-logo variant="on-dark" size="sm" class="shadow-sm border border-white/80" />
+                            <x-logo variant="on-dark" size="sm" />
                         </div>
                     </div>
 

@@ -127,4 +127,14 @@ class RoleAccessTest extends TestCase
         $this->assertMatchesRegularExpression('/href="[^"]*\/dashboard\/tata-usaha"[^>]*class="[^"]*text-on-surface-variant/', $contentSK);
         $this->assertMatchesRegularExpression('/href="[^"]*\/surat-masuk"[^>]*class="[^"]*text-on-surface-variant/', $contentSK);
     }
+
+    public function test_kepala_sekolah_analytics_page_renders_successfully(): void
+    {
+        $kepsek = User::factory()->create(['role' => Role::KEPALA_SEKOLAH]);
+
+        $response = $this->actingAs($kepsek)->get(route('dashboard.kepala-sekolah.analytics'));
+        $response->assertOk();
+        $response->assertSee('analyticsWeeklyChart');
+        $response->assertSee('analyticsCategoryChart');
+    }
 }

@@ -36,12 +36,9 @@
 
     @if($showText)
         <div class="flex flex-col text-left leading-tight min-w-0 flex-1">
-            <div class="flex items-center gap-1.5">
-                <span class="font-bold tracking-tight text-base {{ $isOnDark ? 'text-white' : 'text-slate-900 dark:text-white' }}">ARCHIVA</span>
-                <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">SDN 07</span>
-            </div>
+            <span class="font-bold tracking-tight text-base {{ $isOnDark ? 'text-white drop-shadow-xs' : 'text-slate-900 dark:text-white' }}">ARCHIVA</span>
             @if($subtext)
-                <span class="text-xs {{ $isOnDark ? 'text-slate-200' : 'text-slate-500 dark:text-slate-400' }} leading-tight w-auto flex-1 mt-0.5">{{ $subtext }}</span>
+                <span class="text-xs {{ $isOnDark ? 'text-white/90 drop-shadow-xs' : 'text-slate-500 dark:text-slate-400' }} leading-tight w-auto flex-1 mt-0.5">{{ $subtext }}</span>
             @endif
         </div>
     @endif
