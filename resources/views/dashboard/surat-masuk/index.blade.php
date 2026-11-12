@@ -143,107 +143,70 @@
             </form>
         </x-card>
 
-        <!-- 3. Tabel Surat Masuk -->
+        <!-- 3. Tabel / Daftar Naskah Dinas Masuk -->
+        @php
+            $daftarSurat = $suratList->getCollection()->map(fn ($surat) => [
+                'surat' => $surat,
+                'detailUrl' => route('surat-masuk.show', $surat),
+                'disposisiSheetUrl' => route('surat-masuk.lembar-disposisi', $surat),
+                'tanggalLabel' => $surat->tanggal_diterima->isoFormat('D MMM Y'),
+                'hasFile' => filled($surat->file_path),
+            ]);
+        @endphp
+
         <x-card title="Daftar Naskah Dinas Masuk" subtitle="Total {{ $suratList->total() }} naskah dinas tercatat">
-            <div class="overflow-x-auto -mx-6 -mb-6">
-                <table class="w-full text-left text-xs border-collapse">
-                    <thead>
-                        <tr class="bg-surface-container-low text-on-surface-variant uppercase tracking-wider font-bold border-y border-border-subtle">
-                            <th class="py-3 px-6">Agenda / Nomor Asli</th>
-                            <th class="py-3 px-6">Pengirim</th>
-                            <th class="py-3 px-6">Perihal & Kategori</th>
-                            <th class="py-3 px-6">Tanggal Masuk</th>
-                            <th class="py-3 px-6">Status</th>
-                            <th class="py-3 px-6 text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-border-subtle text-on-surface">
-                        @forelse($suratList as $surat)
-                            <tr class="hover:bg-surface-container-low/60 transition-colors">
-                                <td class="py-3.5 px-6 font-mono whitespace-nowrap">
-                                    <a href="{{ route('surat-masuk.show', $surat) }}" class="font-bold text-primary hover:underline">
-                                        {{ $surat->nomor_agenda }}
-                                    </a>
-                                    @if($surat->nomor_surat_asli)
-                                        <div class="text-[10px] text-outline font-sans mt-0.5">{{ $surat->nomor_surat_asli }}</div>
-                                    @endif
-                                </td>
-                                <td class="py-3.5 px-6 font-medium max-w-[200px]">
-                                    <span class="truncate block">{{ $surat->pengirim }}</span>
-                                </td>
-                                <td class="py-3.5 px-6 max-w-sm">
-                                    <a href="{{ route('surat-masuk.show', $surat) }}" class="font-bold text-on-surface hover:text-primary transition-colors line-clamp-1">
-                                        {{ $surat->perihal }}
-                                    </a>
-                                    <div class="flex items-center gap-1.5 mt-1">
-                                        <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">
-                                            {{ $surat->kategori }}
-                                        </span>
-                                        @if($surat->file_path)
-                                            <span class="text-[10px] text-outline flex items-center gap-0.5" title="Lampiran Berkas">
-                                                📎 Ada Berkas
-                                            </span>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="py-3.5 px-6 text-on-surface-variant tabular-nums whitespace-nowrap">
-                                    {{ $surat->tanggal_diterima->isoFormat('D MMM Y') }}
-                                </td>
-                                <td class="py-3.5 px-6 whitespace-nowrap">
-                                    <x-badge-status :status="$surat->status" />
-                                </td>
-                                <td class="py-3.5 px-6 text-right whitespace-nowrap">
-                                    <div class="inline-flex items-center gap-1.5">
-                                        <!-- Tombol Lembar Disposisi -->
-                                        <a
-                                            href="{{ route('surat-masuk.lembar-disposisi', $surat) }}"
-                                            target="_blank"
-                                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-border-subtle bg-surface-lowest hover:bg-surface-container transition-colors"
-                                            title="Buka / Cetak Lembar Disposisi"
-                                        >
-                                            📄 Lembar Disposisi
-                                        </a>
-
-                                        <!-- Tombol Buat Disposisi (Kepala Sekolah & Admin) -->
-                                        @can('createDisposisi', $surat)
-                                            <button
-                                                type="button"
-                                                @click="openDisposisi({{ json_encode($surat) }})"
-                                                class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-secondary text-on-secondary hover:brightness-95 transition-all shadow-sm"
-                                                title="Buat Instruksi Disposisi"
-                                            >
-                                                ✍️ Disposisi
-                                            </button>
-                                        @endcan
-
-                                        <!-- Tombol Detail -->
-                                        <a
-                                            href="{{ route('surat-masuk.show', $surat) }}"
-                                            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-primary-container text-primary hover:bg-primary hover:text-on-primary transition-colors"
-                                            title="Lihat Detail Naskah"
-                                        >
-                                            Detail
-                                        </a>
-                                    </div>
-                                </td>
+            @if($daftarSurat->isEmpty())
+                <div class="py-12 px-4 text-center text-on-surface-variant">
+                    <div class="max-w-sm mx-auto space-y-2">
+                        <svg class="w-10 h-10 mx-auto text-outline" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z" />
+                        </svg>
+                        <p class="font-bold text-base text-on-surface">Tidak ada surat masuk yang sesuai</p>
+                        <p class="text-xs leading-5">Coba sesuaikan kata kunci pencarian atau bersihkan penyaring status.</p>
+                    </div>
+                </div>
+            @else
+                <!-- Tampilan Desktop (>= 1280px): Tabel semantik tanpa scroll horizontal -->
+                <div class="hidden xl:block -mx-6 {{ $suratList->hasPages() ? '' : '-mb-6 rounded-b-2xl' }} overflow-hidden">
+                    <table class="w-full table-fixed text-left border-collapse">
+                        <caption class="sr-only">Daftar Naskah Dinas Masuk</caption>
+                        <colgroup>
+                            <col style="width: 17%">
+                            <col style="width: 29%">
+                            <col style="width: 22%">
+                            <col style="width: 11%">
+                            <col style="width: 15%">
+                            <col style="width: 6%">
+                        </colgroup>
+                        <thead>
+                            <tr class="bg-surface-container-low text-on-surface-variant text-xs leading-4 font-semibold uppercase tracking-[0.02em] border-y border-border-subtle">
+                                <th scope="col" class="py-3 pl-6 pr-3">AGENDA</th>
+                                <th scope="col" class="py-3 px-3">PERIHAL</th>
+                                <th scope="col" class="py-3 px-3">PENGIRIM</th>
+                                <th scope="col" class="py-3 px-2.5">TANGGAL</th>
+                                <th scope="col" class="py-3 px-2">STATUS</th>
+                                <th scope="col" class="py-3 pl-1 pr-4 text-right">AKSI</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="py-12 text-center text-on-surface-variant">
-                                    <div class="max-w-xs mx-auto space-y-2">
-                                        <p class="font-bold text-base text-on-surface">Tidak ada surat masuk yang sesuai</p>
-                                        <p class="text-xs">Coba sesuaikan kata kunci pencarian atau bersihkan penyaring status.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody class="text-on-surface">
+                            @foreach($daftarSurat as $item)
+                                <x-surat-masuk-row :item="$item" />
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tampilan Mobile & Tablet (< 1280px): Daftar kartu -->
+                <div class="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach($daftarSurat as $item)
+                        <x-surat-masuk-card :item="$item" />
+                    @endforeach
+                </div>
+            @endif
 
             <!-- Paginasi -->
             @if($suratList->hasPages())
-                <div class="pt-4 mt-4 border-t border-border-subtle">
+                <div class="pt-4 mt-4 xl:mt-0 border-t border-border-subtle">
                     {{ $suratList->links() }}
                 </div>
             @endif
