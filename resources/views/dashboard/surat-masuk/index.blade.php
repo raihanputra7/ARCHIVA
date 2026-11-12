@@ -77,13 +77,13 @@
 
         <!-- 2. Filter & Form Pencarian -->
         <x-card>
-            <form method="GET" action="{{ route('surat-masuk.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+            <form method="GET" action="{{ route('surat-masuk.index') }}" x-data class="flex flex-col md:flex-row md:items-end gap-3">
                 <!-- Search input -->
-                <div class="sm:col-span-5">
+                <div class="flex-1 min-w-0">
                     <label for="q" class="block text-xs font-bold text-on-surface mb-1">Pencarian</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <circle cx="11" cy="11" r="8" stroke-width="2"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2"></line>
                             </svg>
@@ -93,19 +93,21 @@
                             id="q"
                             name="q"
                             value="{{ request('q') }}"
-                            placeholder="Cari nomor agenda, nomor surat, pengirim..."
-                            class="w-full h-10 pl-9 pr-3 rounded-lg text-xs bg-surface-lowest border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
+                            @search="if ($el.value === '') $el.form.submit()"
+                            placeholder="Cari nomor agenda, nomor surat, pengirim (tekan Enter)..."
+                            class="w-full h-10 pl-9 pr-3 rounded-lg text-xs bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
                         >
                     </div>
                 </div>
 
-                <!-- Kategori select -->
-                <div class="sm:col-span-3">
+                <!-- Kategori select (auto-submit saat diubah) -->
+                <div class="w-full md:w-48 lg:w-52">
                     <label for="kategori" class="block text-xs font-bold text-on-surface mb-1">Kategori</label>
                     <select
                         id="kategori"
                         name="kategori"
-                        class="w-full h-10 px-3 rounded-lg text-xs bg-surface-lowest border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
+                        @change="$el.form.submit()"
+                        class="w-full h-10 px-3 rounded-lg text-xs bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer"
                     >
                         <option value="semua">Semua Kategori</option>
                         @foreach(['Dinas', 'Undangan', 'Kurikulum', 'Keuangan', 'Kesehatan', 'SK Tugas'] as $cat)
@@ -114,13 +116,14 @@
                     </select>
                 </div>
 
-                <!-- Status select -->
-                <div class="sm:col-span-2">
+                <!-- Status select (auto-submit saat diubah) -->
+                <div class="w-full md:w-44 lg:w-48">
                     <label for="status" class="block text-xs font-bold text-on-surface mb-1">Status</label>
                     <select
                         id="status"
                         name="status"
-                        class="w-full h-10 px-3 rounded-lg text-xs bg-surface-lowest border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
+                        @change="$el.form.submit()"
+                        class="w-full h-10 px-3 rounded-lg text-xs bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none cursor-pointer"
                     >
                         <option value="semua">Semua Status</option>
                         @foreach(['Diterima', 'Didisposisikan', 'Diproses', 'Selesai'] as $st)
@@ -129,17 +132,21 @@
                     </select>
                 </div>
 
-                <!-- Tombol Filter -->
-                <div class="sm:col-span-2 flex items-center gap-2">
-                    <x-button type="submit" variant="primary" size="md" class="w-full">
-                        Saring
-                    </x-button>
-                    @if(request()->hasAny(['q', 'kategori', 'status']))
-                        <a href="{{ route('surat-masuk.index') }}" class="px-2.5 py-2.5 rounded-lg border border-border-subtle bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold" title="Reset Filter">
-                            ✕
+                <!-- Tombol Reset Filter (muncul hanya saat filter/pencarian aktif) -->
+                @if(request()->filled('q') || (request()->filled('kategori') && request('kategori') !== 'semua') || (request()->filled('status') && request('status') !== 'semua'))
+                    <div class="flex-shrink-0">
+                        <a
+                            href="{{ route('surat-masuk.index') }}"
+                            class="w-full md:w-auto h-10 px-3.5 rounded-lg border border-border-subtle bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                            title="Reset Filter"
+                        >
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                            <span>Reset</span>
                         </a>
-                    @endif
-                </div>
+                    </div>
+                @endif
             </form>
         </x-card>
 
