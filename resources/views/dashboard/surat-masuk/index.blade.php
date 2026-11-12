@@ -147,8 +147,52 @@
                         </a>
                     </div>
                 @endif
+
+                <div class="md:hidden">
+                    <button
+                        type="button"
+                        @click="$dispatch('open-sheet', 'mobile-filter-surat-masuk')"
+                        class="w-full h-10 px-3.5 rounded-lg border border-border-subtle bg-surface-container-low text-on-surface text-xs font-semibold inline-flex items-center justify-center gap-1.5 hover:bg-surface-container transition-colors"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        </svg>
+                        <span>Filter Lanjutan</span>
+                    </button>
+                </div>
             </form>
         </x-card>
+
+        <x-bottom-sheet name="mobile-filter-surat-masuk" title="Filter Naskah Dinas Masuk">
+            <form method="GET" action="{{ route('surat-masuk.index') }}" class="space-y-4">
+                <div>
+                    <label for="mobile_q" class="block text-xs font-bold text-on-surface mb-1">Kata Kunci</label>
+                    <input id="mobile_q" type="search" name="q" value="{{ request('q') }}" placeholder="Nomor agenda, perihal, pengirim..." class="w-full h-10 px-3 rounded-lg text-xs bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:outline-none">
+                </div>
+                <div>
+                    <label for="mobile_kategori" class="block text-xs font-bold text-on-surface mb-1">Kategori</label>
+                    <select id="mobile_kategori" name="kategori" class="w-full h-10 px-3 rounded-lg text-xs bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:outline-none">
+                        <option value="semua">Semua Kategori</option>
+                        @foreach(['Dinas', 'Undangan', 'Permohonan', 'Pemberitahuan', 'SK Tugas'] as $kat)
+                            <option value="{{ $kat }}" {{ request('kategori') === $kat ? 'selected' : '' }}>{{ $kat }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="mobile_status" class="block text-xs font-bold text-on-surface mb-1">Status</label>
+                    <select id="mobile_status" name="status" class="w-full h-10 px-3 rounded-lg text-xs bg-surface-lowest text-on-surface border border-outline-variant focus:border-primary focus:outline-none">
+                        <option value="semua">Semua Status</option>
+                        @foreach(['Diterima', 'Didisposisikan', 'Diproses', 'Selesai'] as $st)
+                            <option value="{{ $st }}" {{ request('status') === $st ? 'selected' : '' }}>{{ $st }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex items-center gap-2 pt-2">
+                    <a href="{{ route('surat-masuk.index') }}" class="flex-1 h-10 rounded-lg border border-border-subtle bg-surface-container-low text-xs font-semibold text-on-surface inline-flex items-center justify-center">Reset</a>
+                    <x-button type="submit" variant="primary" class="flex-1">Terapkan</x-button>
+                </div>
+            </form>
+        </x-bottom-sheet>
 
         <!-- 3. Tabel / Daftar Naskah Dinas Masuk -->
         @php
@@ -396,16 +440,14 @@
 
                     <!-- 7. Unggah Berkas Pindaian / Foto Surat -->
                     <div>
-                        <label class="block text-sm font-semibold text-on-surface mb-1.5">
+                        <label for="berkas_masuk" class="block text-sm font-semibold text-on-surface mb-1.5">
                             Unggah Pindaian / Berkas Fisik Surat (PDF, JPG, PNG - Maks. 5 MB)
                         </label>
-                        <input
-                            type="file"
+                        <x-upload-progress
+                            id="berkas_masuk"
                             name="berkas"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            class="w-full text-xs text-on-surface file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-container file:text-primary hover:file:bg-primary hover:file:text-on-primary cursor-pointer border border-outline-variant rounded-lg p-1.5 bg-surface-container-low"
-                        >
-                        <p class="text-[11px] text-on-surface-variant mt-1">Berkas disimpan secara aman di storage privat dinas dengan penamaan acak terenkripsi.</p>
+                            hint="Berkas disimpan secara aman di storage privat dinas dengan penamaan acak terenkripsi."
+                        />
                     </div>
 
                     <div class="pt-4 border-t border-border-subtle flex items-center justify-end gap-3">

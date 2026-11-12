@@ -35,12 +35,6 @@
             }
         }"
     >
-        @if (session('status'))
-            <div class="p-3.5 rounded-xl bg-success-container text-on-success-container border border-success/30 text-xs font-semibold" role="status">
-                {{ session('status') }}
-            </div>
-        @endif
-
         @if ($errors->any())
             <div class="p-3.5 rounded-xl bg-error-container text-on-error-container border border-error/30 text-xs font-medium" role="alert">
                 <ul class="list-disc list-inside space-y-0.5">

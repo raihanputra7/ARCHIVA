@@ -26,8 +26,16 @@
 <button
     type="{{ $type }}"
     {{ $disabled ? 'disabled' : '' }}
+    @if($type === 'submit')
+        x-data="{ submitting: false }"
+        x-init="$el.closest('form')?.addEventListener('submit', (e) => { if (!e.defaultPrevented) submitting = true; })"
+        :class="{ 'opacity-80 pointer-events-none': submitting }"
+    @endif
     {{ $attributes->merge(['class' => "{$baseStyles} {$sizeStyles} {$variantStyles}"]) }}
 >
+    @if($type === 'submit')
+        <x-spinner x-show="submitting" x-cloak size="xs" />
+    @endif
     {{ $slot }}
 </button>
 

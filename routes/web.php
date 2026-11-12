@@ -6,6 +6,9 @@ use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\SuratMasukController;
+use App\Models\Disposisi;
+use App\Models\SuratMasuk;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -71,6 +74,30 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Ringkasan notifikasi ringan (polling Web Notification API)
+    Route::get('/notifications/unread-count', function () {
+        $user = auth()->user();
+        $role = $user?->role?->value ?? $user?->role;
+
+        if ($role === 'admin') {
+            $count = User::where('status', 'pending')->count();
+            $message = "Terdapat {$count} permintaan pendaftaran akun menunggu persetujuan.";
+        } elseif ($role === 'kepala_sekolah') {
+            $count = SuratMasuk::whereIn('status', ['Diterima', 'diterima'])->count();
+            $message = "Ada {$count} surat masuk menunggu arahan disposisi.";
+        } else {
+            $count = Disposisi::where('to_user_id', $user->id)
+                ->where('status', 'Menunggu')
+                ->count();
+            $message = "Anda memiliki {$count} tugas disposisi baru yang menunggu tindak lanjut.";
+        }
+
+        return response()->json([
+            'count' => $count,
+            'message' => $message,
+        ]);
+    })->name('notifications.unread-count');
 });
 
 require __DIR__.'/auth.php';

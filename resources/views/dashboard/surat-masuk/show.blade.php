@@ -144,10 +144,24 @@
                                 <div class="p-4 rounded-xl border border-border-subtle bg-surface-container-low/30 space-y-3">
                                     <div class="flex items-start justify-between gap-3">
                                         <div>
-                                            <div class="flex items-center gap-2">
+                                            <div class="flex items-center gap-2 flex-wrap">
                                                 <span class="font-bold text-on-surface text-xs">{{ $disp->fromUser->name }} (Pemberi)</span>
                                                 <span class="text-outline text-xs">➔</span>
-                                                <span class="font-bold text-primary text-xs">{{ $disp->toUser->name }} (Penerima)</span>
+                                                <x-popover align="left" width="w-64">
+                                                    <x-slot name="trigger">
+                                                        <button type="button" class="font-bold text-primary text-xs underline decoration-dotted underline-offset-2 cursor-pointer">
+                                                            {{ $disp->toUser->name }} (Penerima)
+                                                        </button>
+                                                    </x-slot>
+                                                    <div class="space-y-1">
+                                                        <p class="font-bold text-on-surface">{{ $disp->toUser->name }}</p>
+                                                        <p class="text-[11px] text-on-surface-variant">
+                                                            Peran: {{ $disp->toUser->role instanceof \App\Enums\Role ? $disp->toUser->role->label() : $disp->toUser->role }}
+                                                        </p>
+                                                        <p class="text-[11px] text-on-surface-variant">Status Tugas: <strong class="text-on-surface">{{ $disp->status }}</strong></p>
+                                                        <p class="text-[11px] text-outline">Diteruskan: {{ $disp->created_at?->isoFormat('D MMM Y, HH:mm') }}</p>
+                                                    </div>
+                                                </x-popover>
                                             </div>
                                             <div class="flex items-center gap-2 mt-1 text-[11px] text-outline">
                                                 <span>Urgensi: <strong>{{ $disp->sifat }}</strong></span>

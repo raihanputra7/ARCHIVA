@@ -8,6 +8,11 @@
     $pendingRegistrationsCount = $role === 'admin'
         ? \App\Models\User::where('status', 'pending')->count()
         : 0;
+    $unreadDisposisiCount = ($user && in_array($role, ['guru', 'tenaga_pendidik'], true))
+        ? \App\Models\Disposisi::where('to_user_id', $user->id)->where('status', 'Menunggu')->count()
+        : ($role === 'kepala_sekolah'
+            ? \App\Models\SuratMasuk::whereIn('status', ['Diterima', 'diterima'])->count()
+            : 0);
 
     // Menu definition per role
     $navSections = match($role) {
@@ -33,7 +38,7 @@
                 'title' => 'Menu Utama',
                 'items' => [
                     ['id' => 'dashboard', 'label' => 'Dashboard', 'route' => 'dashboard.kepala-sekolah', 'icon' => 'dashboard'],
-                    ['id' => 'surat_masuk', 'label' => 'Disposisi Surat', 'route' => 'surat-masuk.index', 'icon' => 'rate_review'],
+                    ['id' => 'surat_masuk', 'label' => 'Disposisi Surat', 'route' => 'surat-masuk.index', 'icon' => 'rate_review', 'badge' => $unreadDisposisiCount],
                     ['id' => 'surat_keluar', 'label' => 'Surat Keluar', 'route' => 'surat-keluar.index', 'icon' => 'outgoing_mail'],
                     ['id' => 'analytics', 'label' => 'Analitik Eksekutif', 'route' => 'dashboard.kepala-sekolah.analytics', 'icon' => 'analytics'],
                     ['id' => 'arsip', 'label' => 'Arsip Naskah', 'route' => 'dashboard.kepala-sekolah', 'icon' => 'folder_open', 'disabled' => true],
@@ -68,7 +73,7 @@
                 'title' => 'Menu Utama',
                 'items' => [
                     ['id' => 'dashboard', 'label' => 'Dashboard', 'route' => 'dashboard.guru', 'icon' => 'dashboard'],
-                    ['id' => 'disposisi', 'label' => 'Tugas Disposisi', 'route' => 'surat-masuk.index', 'icon' => 'assignment'],
+                    ['id' => 'disposisi', 'label' => 'Tugas Disposisi', 'route' => 'surat-masuk.index', 'icon' => 'assignment', 'badge' => $unreadDisposisiCount],
                     ['id' => 'arsip', 'label' => 'Arsip Kurikulum', 'route' => 'dashboard.guru', 'icon' => 'folder_open', 'disabled' => true],
                 ]
             ],
@@ -84,7 +89,7 @@
                 'title' => 'Menu Utama',
                 'items' => [
                     ['id' => 'dashboard', 'label' => 'Dashboard', 'route' => 'dashboard.tenaga-pendidik', 'icon' => 'dashboard'],
-                    ['id' => 'instruksi', 'label' => 'Instruksi Disposisi', 'route' => 'surat-masuk.index', 'icon' => 'task'],
+                    ['id' => 'instruksi', 'label' => 'Instruksi Disposisi', 'route' => 'surat-masuk.index', 'icon' => 'task', 'badge' => $unreadDisposisiCount],
                     ['id' => 'sarpras', 'label' => 'Sarpras & Fasilitas', 'route' => 'dashboard.tenaga-pendidik', 'icon' => 'inventory_2', 'disabled' => true],
                 ]
             ],
@@ -245,22 +250,23 @@
                                     <span x-show="sidebarExpanded" class="ml-auto text-[10px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant font-normal">Nanti</span>
                                 </div>
                             @else
-                                <a
-                                    href="{{ $href }}"
-                                    :title="!sidebarExpanded ? '{{ $item['label'] }}' : ''"
-                                    :class="sidebarExpanded ? 'justify-start px-3' : 'justify-center px-2'"
-                                    class="flex items-center gap-3 py-2.5 rounded-lg text-xs transition-colors duration-150 group {{ $isItemActive ? 'bg-primary-container text-primary border-l-[3px] border-secondary font-bold' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-semibold' }}"
-                                >
-                                    <svg class="w-5 h-5 flex-shrink-0 {{ $isItemActive ? 'text-primary' : 'text-outline group-hover:text-on-surface' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        {!! $iconSvg !!}
-                                    </svg>
-                                    <span x-show="sidebarExpanded" class="truncate">{{ $item['label'] }}</span>
-                                    @if(!empty($item['badge']) && $item['badge'] > 0)
-                                        <span x-show="sidebarExpanded" class="ml-auto inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-warning-container text-on-warning-container text-[10px] font-extrabold tabular-nums">
-                                            {{ $item['badge'] }}
-                                        </span>
-                                    @endif
-                                </a>
+                                <x-tooltip :text="$item['label']" position="right" when="!sidebarExpanded" class="w-full">
+                                    <a
+                                        href="{{ $href }}"
+                                        :class="sidebarExpanded ? 'justify-start px-3' : 'justify-center px-2'"
+                                        class="w-full flex items-center gap-3 py-2.5 rounded-lg text-xs transition-colors duration-150 group {{ $isItemActive ? 'bg-primary-container text-primary border-l-[3px] border-secondary font-bold' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-semibold' }}"
+                                    >
+                                        <svg class="w-5 h-5 flex-shrink-0 {{ $isItemActive ? 'text-primary' : 'text-outline group-hover:text-on-surface' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            {!! $iconSvg !!}
+                                        </svg>
+                                        <span x-show="sidebarExpanded" class="truncate">{{ $item['label'] }}</span>
+                                        @if(!empty($item['badge']) && $item['badge'] > 0)
+                                            <span x-show="sidebarExpanded" class="ml-auto inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full bg-warning-container text-on-warning-container text-[10px] font-extrabold tabular-nums">
+                                                {{ $item['badge'] }}
+                                            </span>
+                                        @endif
+                                    </a>
+                                </x-tooltip>
                             @endif
                         @endforeach
                     </div>

@@ -307,8 +307,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Lampiran Naskah Digital (PDF / Gambar, Maks. 5MB)</label>
-                            <input type="file" name="berkas" accept=".pdf,.jpg,.jpeg,.png" class="w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-navy/10 file:text-primary-navy dark:file:bg-primary-gold/10 dark:file:text-primary-gold hover:file:opacity-80">
+                            <label for="berkas_keluar" class="block text-xs font-semibold text-on-surface mb-1">Lampiran Naskah Digital (PDF / Gambar, Maks. 5MB)</label>
+                            <x-upload-progress id="berkas_keluar" name="berkas" />
                         </div>
 
                         <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">

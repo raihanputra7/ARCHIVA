@@ -20,6 +20,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="h-full bg-surface text-on-surface font-sans antialiased">
+        <x-progress-bar />
         <div
             x-data="{ sidebarExpanded: true, mobileSidebarOpen: false }"
             class="min-h-full flex flex-col"
@@ -75,5 +76,8 @@
                 </main>
             </div>
         </div>
+
+        <x-confirm-modal />
+        <x-toast />
     </body>
 </html>

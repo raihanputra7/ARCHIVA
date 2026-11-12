@@ -4,7 +4,8 @@
 
 @php
     $user = $user ?? auth()->user();
-    $roleName = match($user?->role?->value ?? $user?->role) {
+    $roleValue = $user?->role?->value ?? $user?->role;
+    $roleName = match($roleValue) {
         'admin' => 'Admin Sistem',
         'kepala_sekolah' => 'Kepala Sekolah',
         'tata_usaha' => 'Tata Usaha' . ($user?->unit ? ' (' . ucfirst($user->unit) . ')' : ''),
@@ -12,6 +13,26 @@
         'tenaga_pendidik' => 'Tenaga Pendidik',
         default => 'Pengguna',
     };
+
+    $notifCount = 0;
+    $notifLabel = 'Tidak ada pemberitahuan baru';
+    $notifRoute = route('dashboard');
+
+    if ($user) {
+        if ($roleValue === 'admin') {
+            $notifCount = \App\Models\User::where('status', 'pending')->count();
+            $notifLabel = $notifCount > 0 ? "{$notifCount} pendaftaran akun menunggu persetujuan" : 'Semua pendaftaran telah ditinjau';
+            $notifRoute = route('dashboard.admin.registrations');
+        } elseif ($roleValue === 'kepala_sekolah') {
+            $notifCount = \App\Models\SuratMasuk::whereIn('status', ['Diterima', 'diterima'])->count();
+            $notifLabel = $notifCount > 0 ? "{$notifCount} surat masuk menunggu disposisi" : 'Antrean disposisi bersih';
+            $notifRoute = route('surat-masuk.index');
+        } else {
+            $notifCount = \App\Models\Disposisi::where('to_user_id', $user->id)->where('status', 'Menunggu')->count();
+            $notifLabel = $notifCount > 0 ? "{$notifCount} tugas disposisi menunggu tindak lanjut" : 'Tidak ada tugas disposisi baru';
+            $notifRoute = route('surat-masuk.index');
+        }
+    }
 @endphp
 
 <header class="h-16 bg-surface-lowest border-b border-border-subtle sticky top-0 z-30 transition-colors">
@@ -48,8 +69,63 @@
         </div>
 
         <!-- Right actions -->
-        <div class="flex items-center gap-2 sm:gap-3">
-            
+        <div
+            class="flex items-center gap-2 sm:gap-3"
+            x-init="$store.notifications.initPolling('{{ route('notifications.unread-count') }}', {{ $notifCount }})"
+        >
+            <!-- Notification Bell + Popover -->
+            <div class="relative" x-data="{ notifOpen: false }">
+                <button
+                    type="button"
+                    @click="notifOpen = !notifOpen"
+                    @keydown.escape="notifOpen = false"
+                    class="relative p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    title="Pemberitahuan"
+                    aria-label="Pemberitahuan"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                    @if($notifCount > 0)
+                        <span class="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-error text-white text-[10px] font-extrabold tabular-nums">
+                            {{ $notifCount > 99 ? '99+' : $notifCount }}
+                        </span>
+                    @endif
+                </button>
+
+                <div
+                    x-show="notifOpen"
+                    x-cloak
+                    @click.outside="notifOpen = false"
+                    x-transition:enter="transition ease-out duration-150"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    class="absolute right-0 mt-2 w-72 bg-surface-lowest border border-border-subtle rounded-2xl shadow-xl p-3.5 z-50 space-y-3 text-xs"
+                >
+                    <div class="flex items-center justify-between border-b border-border-subtle pb-2">
+                        <span class="font-bold text-on-surface">Pemberitahuan</span>
+                        @if($notifCount > 0)
+                            <span class="px-2 py-0.5 rounded-full bg-warning-container text-on-warning-container text-[10px] font-bold tabular-nums">{{ $notifCount }} baru</span>
+                        @endif
+                    </div>
+
+                    <a href="{{ $notifRoute }}" class="block p-2.5 rounded-xl bg-surface-container-low/60 hover:bg-surface-container transition-colors">
+                        <p class="font-semibold text-on-surface leading-snug">{{ $notifLabel }}</p>
+                        <p class="text-[11px] text-primary font-semibold mt-1">Lihat daftar &rarr;</p>
+                    </a>
+
+                    <template x-if="$store.notifications.supported && $store.notifications.permission !== 'granted'">
+                        <button
+                            type="button"
+                            @click="$store.notifications.requestPermission()"
+                            class="w-full py-2 px-3 rounded-lg bg-primary-container text-primary font-semibold text-[11px] hover:bg-primary-container/80 transition-colors cursor-pointer"
+                        >
+                            Aktifkan Notifikasi Browser
+                        </button>
+                    </template>
+                </div>
+            </div>
+
             <!-- Dark mode toggle -->
             <button
                 type="button"
@@ -119,9 +195,13 @@
                         <span>Pengaturan Akun</span>
                     </a>
 
-                    <form method="POST" action="{{ route('logout') }}">
+                    <form method="POST" action="{{ route('logout') }}" x-ref="logoutForm">
                         @csrf
-                        <button type="submit" class="w-full flex items-center gap-2.5 px-3.5 py-2 text-error hover:bg-error-container/20 transition-colors text-left">
+                        <button
+                            type="button"
+                            @click="open = false; $store.confirm.ask({ title: 'Keluar dari ARCHIVA?', message: 'Sesi Anda akan diakhiri. Anda harus masuk kembali untuk mengakses portal persuratan.', confirmText: 'Ya, Keluar', variant: 'danger', form: $refs.logoutForm })"
+                            class="w-full flex items-center gap-2.5 px-3.5 py-2 text-error hover:bg-error-container/20 transition-colors text-left cursor-pointer"
+                        >
                             <svg class="w-4 h-4 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                             </svg>
