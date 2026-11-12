@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\ProfileController;
@@ -19,6 +20,15 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 // Route group per role
 Route::middleware(['auth', 'role:admin'])->prefix('dashboard/admin')->name('dashboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'admin'])->name('admin');
+    Route::get('/akun', [AdminController::class, 'users'])->name('admin.users');
+    Route::post('/akun', [AdminController::class, 'storeUser'])->name('admin.users.store');
+    Route::patch('/akun/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::patch('/akun/{user}/status', [AdminController::class, 'toggleStatus'])->name('admin.users.toggle-status');
+    Route::patch('/akun/{user}/reset-password', [AdminController::class, 'resetPassword'])->name('admin.users.reset-password');
+    Route::get('/permintaan-pendaftaran', [AdminController::class, 'registrations'])->name('admin.registrations');
+    Route::patch('/permintaan-pendaftaran/{user}/approve', [AdminController::class, 'approveRegistration'])->name('admin.registrations.approve');
+    Route::patch('/permintaan-pendaftaran/{user}/reject', [AdminController::class, 'rejectRegistration'])->name('admin.registrations.reject');
+    Route::get('/audit', [AdminController::class, 'audit'])->name('admin.audit');
 });
 
 Route::middleware(['auth', 'role:kepala_sekolah'])->prefix('dashboard/kepala-sekolah')->name('dashboard.')->group(function () {

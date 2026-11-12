@@ -30,6 +30,7 @@ class SuratKeluarController extends Controller
             $search = $request->string('q');
             $query->where(function ($q) use ($search) {
                 $q->where('nomor_agenda', 'like', "%{$search}%")
+                    ->orWhere('kode_klasifikasi', 'like', "%{$search}%")
                     ->orWhere('nomor_surat', 'like', "%{$search}%")
                     ->orWhere('tujuan', 'like', "%{$search}%")
                     ->orWhere('perihal', 'like', "%{$search}%");
@@ -38,6 +39,10 @@ class SuratKeluarController extends Controller
 
         if ($request->filled('status')) {
             $query->where('status', $request->string('status'));
+        }
+
+        if ($request->filled('klasifikasi')) {
+            $query->where('kode_klasifikasi', 'like', $request->string('klasifikasi').'%');
         }
 
         $suratKeluar = $query->paginate(10)->withQueryString();
@@ -54,7 +59,20 @@ class SuratKeluarController extends Controller
             'terkirim' => SuratKeluar::where('status', 'Terkirim')->count(),
         ];
 
-        return view('dashboard.surat-keluar.index', compact('suratKeluar', 'metrics', 'parentSuratMasuk'));
+        $klasifikasiGroups = $this->suratKeluarService->getKlasifikasiGroups();
+        $klasifikasiMap = $this->suratKeluarService->getFlatKlasifikasiOptions();
+        $defaultKlasifikasi = (string) config('archiva.surat_keluar.default_klasifikasi', 'PK.01.01');
+        $nextNomorUrut = $this->suratKeluarService->getNextNomorUrut();
+
+        return view('dashboard.surat-keluar.index', compact(
+            'suratKeluar',
+            'metrics',
+            'parentSuratMasuk',
+            'klasifikasiGroups',
+            'klasifikasiMap',
+            'defaultKlasifikasi',
+            'nextNomorUrut'
+        ));
     }
 
     public function store(StoreSuratKeluarRequest $request): RedirectResponse
@@ -66,7 +84,7 @@ class SuratKeluarController extends Controller
         );
 
         return redirect()->route('surat-keluar.show', $suratKeluar)
-            ->with('success', 'Surat keluar berhasil didaftarkan dengan nomor agenda '.$suratKeluar->nomor_agenda);
+            ->with('success', 'Surat keluar berhasil didaftarkan dengan nomor '.$suratKeluar->nomor_surat.' (Agenda: '.$suratKeluar->nomor_agenda.')');
     }
 
     public function show(SuratKeluar $suratKeluar): View

@@ -21,6 +21,16 @@
             'label' => 'Selesai',
             'icon' => 'M5 13l4 4L19 7', // checkmark
         ],
+        'disetujui' => [
+            'class' => 'bg-primary-container text-on-primary-container border border-primary/20',
+            'label' => 'Disetujui',
+            'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', // check-circle
+        ],
+        'terkirim' => [
+            'class' => 'bg-success-container text-on-success-container border border-success/30',
+            'label' => 'Terkirim',
+            'icon' => 'M5 13l4 4L19 7', // checkmark
+        ],
         'terlambat' => [
             'class' => 'bg-error-container text-on-error-container border border-error/30',
             'label' => 'Terlambat',

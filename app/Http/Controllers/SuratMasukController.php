@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AccountStatus;
 use App\Enums\Role;
 use App\Http\Requests\StoreSuratMasukRequest;
 use App\Models\SuratMasuk;
 use App\Models\User;
+use App\Services\Notifications\NotificationDispatcher;
 use App\Services\SuratMasukService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -68,13 +70,15 @@ class SuratMasukController extends Controller
 
         $suratList = $query->paginate(15)->withQueryString();
 
-        // Daftar target user untuk modal disposisi (Guru, TU, Tendik)
+        // Daftar target user untuk modal disposisi (Guru, TU, Tendik aktif)
         $assignableUsers = User::whereIn('role', [Role::GURU, Role::TATA_USAHA, Role::TENAGA_PENDIDIK])
+            ->where('status', AccountStatus::ACTIVE->value)
             ->orderBy('name')
             ->get();
 
-        // Daftar calon penerima saat registrasi surat (default Kepala Sekolah)
+        // Daftar calon penerima saat registrasi surat (default Kepala Sekolah aktif)
         $recipientCandidates = User::whereIn('role', [Role::KEPALA_SEKOLAH, Role::GURU, Role::TATA_USAHA, Role::TENAGA_PENDIDIK])
+            ->where('status', AccountStatus::ACTIVE->value)
             ->orderByRaw("CASE WHEN role = 'kepala_sekolah' THEN 1 ELSE 2 END, name ASC")
             ->get();
 
@@ -115,7 +119,7 @@ class SuratMasukController extends Controller
     /**
      * Menampilkan detail surat masuk, daftar penerima, dan riwayat status (audit trail).
      */
-    public function show(SuratMasuk $suratMasuk): View
+    public function show(SuratMasuk $suratMasuk, NotificationDispatcher $dispatcher): View
     {
         Gate::authorize('view', $suratMasuk);
 
@@ -141,10 +145,27 @@ class SuratMasukController extends Controller
         ]);
 
         $assignableUsers = User::whereIn('role', [Role::GURU, Role::TATA_USAHA, Role::TENAGA_PENDIDIK])
+            ->where('status', AccountStatus::ACTIVE->value)
             ->orderBy('name')
             ->get();
 
-        return view('dashboard.surat-masuk.show', compact('suratMasuk', 'assignableUsers'));
+        // Bangun link WhatsApp hanya bagi pembuat disposisi / Kepala Sekolah / Admin agar nomor WA tidak bocor ke role lain
+        $whatsappLinks = [];
+        foreach ($suratMasuk->disposisi as $disp) {
+            $canSendWa = $user && (
+                $disp->from_user_id === $user->id
+                || $user->hasRole(Role::ADMIN, Role::KEPALA_SEKOLAH)
+            );
+
+            if ($canSendWa) {
+                $link = $dispatcher->whatsappLinkForDisposisi($disp, $suratMasuk);
+                if ($link !== null) {
+                    $whatsappLinks[$disp->id] = $link;
+                }
+            }
+        }
+
+        return view('dashboard.surat-masuk.show', compact('suratMasuk', 'assignableUsers', 'whatsappLinks'));
     }
 
     /**

@@ -158,15 +158,9 @@
         >
             <!-- Tren Volume Harian -->
             <x-card class="p-6 lg:col-span-2">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <h2 class="text-base font-bold text-on-surface">Tren Aktivitas Surat (7 Hari Terakhir)</h2>
-                        <p class="text-xs text-on-surface-variant">Volume pencatatan surat masuk harian SDN Jatipulo 07</p>
-                    </div>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-primary-container text-primary">
-                        <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                        Data Riil
-                    </span>
+                <div class="mb-4">
+                    <h2 class="text-base font-bold text-on-surface">Tren Aktivitas Surat (7 Hari Terakhir)</h2>
+                    <p class="text-xs text-on-surface-variant">Volume pencatatan surat masuk harian SDN Jatipulo 07</p>
                 </div>
                 <div class="h-64 relative">
                     <canvas id="analyticsWeeklyChart"></canvas>

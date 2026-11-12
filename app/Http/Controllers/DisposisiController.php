@@ -19,13 +19,15 @@ class DisposisiController extends Controller
     {
         Gate::authorize('createDisposisi', $suratMasuk);
 
-        $service->createDisposisi(
+        $created = $service->createDisposisi(
             $suratMasuk,
             $request->validated(),
             $request->user()
         );
 
-        return back()->with('status', 'Instruksi disposisi berhasil diteruskan kepada penerima.');
+        return back()
+            ->with('status', 'Instruksi disposisi berhasil diteruskan kepada penerima.')
+            ->with('disposisi_created_ids', $created->pluck('id')->all());
     }
 
     /**

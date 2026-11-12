@@ -14,6 +14,7 @@ class SuratKeluar extends Model
 
     protected $fillable = [
         'nomor_agenda',
+        'kode_klasifikasi',
         'parent_surat_masuk_id',
         'nomor_surat',
         'tujuan',
@@ -56,5 +57,23 @@ class SuratKeluar extends Model
     public function parentSuratMasuk(): BelongsTo
     {
         return $this->belongsTo(SuratMasuk::class, 'parent_surat_masuk_id');
+    }
+
+    /**
+     * Mengambil nama klasifikasi arsip berdasarkan kode Kepgub DKI No. 1598 Tahun 2021.
+     */
+    public function getNamaKlasifikasiAttribute(): ?string
+    {
+        if (! $this->kode_klasifikasi) {
+            return null;
+        }
+
+        foreach (config('klasifikasi.groups', []) as $group) {
+            if (isset($group['items'][$this->kode_klasifikasi]['nama'])) {
+                return $group['items'][$this->kode_klasifikasi]['nama'];
+            }
+        }
+
+        return null;
     }
 }

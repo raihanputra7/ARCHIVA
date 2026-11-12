@@ -155,13 +155,20 @@
                                 </div>
 
                                 <!-- Tombol Submit -->
-                                <div class="pt-1">
+                                <div class="pt-1 space-y-2.5">
                                     <x-button type="submit" variant="primary" size="md" class="w-full h-10 text-sm font-bold shadow-sm">
                                         <span>Masuk ke Sistem</span>
                                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                         </svg>
                                     </x-button>
+
+                                    <p class="text-center text-xs text-on-surface-variant">
+                                        Belum memiliki akun?
+                                        <a href="{{ route('register') }}" class="font-semibold text-primary hover:underline">
+                                            Daftar Akun Baru
+                                        </a>
+                                    </p>
                                 </div>
                             </form>
 

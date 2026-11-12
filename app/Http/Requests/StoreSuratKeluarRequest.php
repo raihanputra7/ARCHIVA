@@ -16,6 +16,7 @@ class StoreSuratKeluarRequest extends FormRequest
     {
         return [
             'parent_surat_masuk_id' => ['nullable', 'integer', 'exists:surat_masuk,id'],
+            'kode_klasifikasi' => ['nullable', 'string', 'max:20', 'regex:/^[A-Z]{2}(?:\.\d{2}){0,2}$/'],
             'nomor_surat' => ['nullable', 'string', 'max:100'],
             'tujuan' => ['required', 'string', 'max:255'],
             'perihal' => ['required', 'string', 'max:500'],
@@ -30,6 +31,7 @@ class StoreSuratKeluarRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'kode_klasifikasi.regex' => 'Format kode klasifikasi tidak valid. Gunakan format resmi Kepgub (misal: PK.01.01 atau KG.11.00).',
             'tujuan.required' => 'Pihak tujuan surat keluar wajib diisi.',
             'perihal.required' => 'Perihal surat wajib diisi.',
             'tanggal_surat.required' => 'Tanggal surat wajib diisi.',

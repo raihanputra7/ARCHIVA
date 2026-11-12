@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Role;
+use App\Http\Requests\Admin\MonitorUsersRequest;
 use App\Models\Disposisi;
+use App\Models\RiwayatStatus;
 use App\Models\SuratKeluar;
 use App\Models\SuratMasuk;
 use App\Models\User;
+use App\Services\AdminMonitoringService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,64 +35,75 @@ class DashboardController extends Controller
     /**
      * Dashboard Administrator.
      */
-    public function admin(): View
+    public function admin(MonitorUsersRequest $request, AdminMonitoringService $adminService): View
     {
+        $validated = $request->validated();
+        $search = $validated['q'] ?? null;
+        $roleFilter = $validated['role'] ?? null;
+
+        $monitoring = $adminService->getAccountMonitoringSummary($search, $roleFilter);
+        $roles = Role::cases();
+
         $kpis = [
-            [
-                'id' => 'total_surat',
-                'label' => 'Total Surat Masuk',
-                'value' => (string) SuratMasuk::count(),
-                'unit' => 'Berkas',
-                'delta' => 'Aktif',
-                'trend' => 'up',
-                'subtext' => 'Tercatat di sistem',
-            ],
-            [
-                'id' => 'total_disposisi',
-                'label' => 'Total Disposisi',
-                'value' => (string) Disposisi::count(),
-                'unit' => 'Tugas',
-                'delta' => 'Alur dinas',
-                'trend' => 'up',
-                'subtext' => 'Tindak lanjut pimpinan',
-            ],
-            [
-                'id' => 'total_surat_keluar',
-                'label' => 'Surat Keluar & Draf',
-                'value' => (string) SuratKeluar::count(),
-                'unit' => 'Naskah',
-                'delta' => 'Terkendali',
-                'trend' => 'up',
-                'subtext' => 'Pengarsipan nomor',
-            ],
             [
                 'id' => 'total_pengguna',
                 'label' => 'Pengguna Terdaftar',
-                'value' => (string) User::count(),
+                'value' => (string) $monitoring['totalCount'],
                 'unit' => 'Akun',
-                'delta' => '5 Peran',
-                'trend' => 'up',
-                'subtext' => 'Akses terverifikasi',
+                'subtext' => 'Terdaftar di sistem ARCHIVA',
+            ],
+            [
+                'id' => 'sesi_aktif',
+                'label' => 'Sesi Aktif',
+                'value' => (string) $monitoring['activeSessionsCount'],
+                'unit' => 'Pengguna',
+                'subtext' => 'Aktif dalam 15 menit terakhir',
+            ],
+            [
+                'id' => 'akun_terverifikasi',
+                'label' => 'Email Terverifikasi',
+                'value' => (string) $monitoring['verifiedCount'],
+                'unit' => 'Akun',
+                'subtext' => 'Siap menerima notifikasi',
+            ],
+            [
+                'id' => 'total_audit',
+                'label' => 'Aktivitas & Audit',
+                'value' => (string) (RiwayatStatus::count() + Disposisi::count()),
+                'unit' => 'Catatan',
+                'subtext' => 'Jejak disposisi & status',
             ],
         ];
 
         $activities = Disposisi::with(['fromUser', 'toUser', 'suratMasuk'])
             ->latest()
-            ->take(6)
+            ->take(5)
             ->get()
             ->map(function ($disp) {
+                $fromName = $disp->fromUser?->name ?? 'Sistem';
+                $toName = $disp->toUser?->name ?? 'Penerima';
+                $agenda = $disp->suratMasuk?->nomor_agenda ?? '-';
+
                 return [
-                    'action' => 'Disposisi '.$disp->suratMasuk->nomor_agenda,
-                    'user' => $disp->fromUser->name.' ➔ '.$disp->toUser->name,
+                    'action' => 'Disposisi '.$agenda,
+                    'user' => $fromName.' ➔ '.$toName,
                     'detail' => $disp->instruksi,
-                    'time' => $disp->created_at->diffForHumans(),
+                    'time' => $disp->created_at?->diffForHumans() ?? '-',
                     'icon' => 'rate_review',
                 ];
             })->all();
 
         $repositories = $this->getRealRepositories();
 
-        return view('dashboard.admin', compact('kpis', 'activities', 'repositories'));
+        return view('dashboard.admin', compact(
+            'kpis',
+            'monitoring',
+            'roles',
+            'search',
+            'roleFilter',
+            'activities',
+            'repositories'
+        ));
     }
 
     /**
@@ -405,7 +419,7 @@ class DashboardController extends Controller
                 'category' => 'Kedinasan',
                 'description' => 'Arsip persuratan resmi dari Dinas Pendidikan, Sudin, dan Kementerian.',
                 'files_count' => SuratMasuk::where('kategori', 'Dinas')->count(),
-                'updated_at' => SuratMasuk::where('kategori', 'Dinas')->latest()->value('updated_at')?->diffForHumans() ?? 'Belum ada berkas',
+                'updated_at' => SuratMasuk::where('kategori', 'Dinas')->latest()->value('updated_at')?->locale('id')->diffForHumans() ?? 'Belum ada berkas',
             ],
             [
                 'id' => 'repo-2',

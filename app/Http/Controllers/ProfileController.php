@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\AdminMonitoringService;
+use App\Services\Notifications\NotificationDispatcher;
+use App\Services\RegistrationService;
+use App\Support\PhoneNormalizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,25 +18,48 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request, AdminMonitoringService $adminService): View
     {
         return view('profile.edit', [
             'user' => $request->user(),
+            'adminContacts' => $adminService->getAdminContacts(),
         ]);
     }
 
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
+    public function update(
+        ProfileUpdateRequest $request,
+        RegistrationService $registrationService,
+        NotificationDispatcher $dispatcher,
+    ): RedirectResponse {
+        $validated = $request->validated();
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user->fill([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone_wa' => ! empty($validated['phone_wa'])
+                ? PhoneNormalizer::normalize($validated['phone_wa'])
+                : null,
+            'notify_email' => $request->boolean('notify_email'),
+        ]);
+
+        $emailChanged = $user->isDirty('email');
+
+        if ($emailChanged) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
+
+        if ($emailChanged) {
+            $plainToken = $registrationService->issueTokenForUser($user);
+            $dispatcher->sendVerificationEmail($user, $plainToken);
+
+            return Redirect::route('profile.edit')->with('status', 'profile-email-verification-sent');
+        }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

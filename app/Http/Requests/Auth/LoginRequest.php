@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Enums\AccountStatus;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -47,6 +48,25 @@ class LoginRequest extends FormRequest
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
+            ]);
+        }
+
+        $user = Auth::user();
+        $status = $user?->status ?? AccountStatus::ACTIVE->value;
+
+        if ($status !== AccountStatus::ACTIVE->value) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            $message = match ($status) {
+                AccountStatus::PENDING->value => 'Akun Anda masih menunggu persetujuan Administrator. Pastikan email Anda sudah terverifikasi.',
+                AccountStatus::REJECTED->value => 'Pendaftaran akun Anda tidak disetujui oleh Administrator.',
+                AccountStatus::INACTIVE->value => 'Akun Anda sedang dinonaktifkan. Silakan hubungi Administrator.',
+                default => 'Akun Anda belum aktif. Silakan hubungi Administrator.',
+            };
+
+            throw ValidationException::withMessages([
+                'email' => $message,
             ]);
         }
 

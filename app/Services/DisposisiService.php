@@ -7,12 +7,18 @@ use App\Models\Disposisi;
 use App\Models\RiwayatStatus;
 use App\Models\SuratMasuk;
 use App\Models\User;
+use App\Services\Notifications\NotificationDispatcher;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DisposisiService
 {
+    public function __construct(
+        private readonly ?NotificationDispatcher $dispatcher = null
+    ) {}
+
     /**
      * Membuat lembar disposisi baru untuk surat masuk (mendukung multi-assignee secara atomic).
      *
@@ -21,7 +27,7 @@ class DisposisiService
      */
     public function createDisposisi(SuratMasuk $surat, array $data, User $fromUser): Collection
     {
-        return DB::transaction(function () use ($surat, $data, $fromUser) {
+        $createdDisposisi = DB::transaction(function () use ($surat, $data, $fromUser) {
             $recipientIds = [];
             if (! empty($data['to_user_ids']) && is_array($data['to_user_ids'])) {
                 $recipientIds = array_values(array_unique(array_filter($data['to_user_ids'])));
@@ -73,6 +79,18 @@ class DisposisiService
 
             return $createdDisposisi;
         });
+
+        try {
+            ($this->dispatcher ?? app(NotificationDispatcher::class))
+                ->dispatchDisposisiCreated($surat, $createdDisposisi);
+        } catch (\Throwable $e) {
+            Log::warning('Gagal memicu notifikasi disposisi.', [
+                'surat_masuk_id' => $surat->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        return $createdDisposisi;
     }
 
     /**

@@ -626,11 +626,12 @@ class SuratSeeder extends Seeder
             }
         }
 
-        // Pertahankan seed surat keluar
+        // Pertahankan seed surat keluar sesuai tahap penomoran berjalan (125/PK.01.01)
         SuratKeluar::updateOrCreate(
             ['nomor_agenda' => 'ARC/SK/'.$year.'/0001'],
             [
-                'nomor_surat' => '421.2/012/SDN07/X/2026',
+                'kode_klasifikasi' => 'PK.01.01',
+                'nomor_surat' => '125/PK.01.01',
                 'tujuan' => 'Suku Dinas Pendidikan Wilayah II Kota Administrasi Jakarta Barat',
                 'perihal' => 'Laporan Rekapitulasi Data Kehadiran Pendidik dan Tenaga Kependidikan Bulan Oktober 2026',
                 'tanggal_surat' => $now->copy()->subDay(),
